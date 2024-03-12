@@ -1,0 +1,85 @@
+// 自定义option
+syntax = "proto3";
+
+package kiwi;
+option go_package = "github.com/15mga/kiwi_tool";
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FileOptions {
+  Svc svc = 151001;
+}
+
+message Ntc {
+  string svc = 1;
+  repeated NtcItem items = 2;
+}
+
+message NtcItem {
+  string code = 1;
+  EWorkerMode mode = 2;
+  EOrigin origin = 3;
+  string key = 4;
+}
+
+message Svc {
+  int32 id = 1; //服务id
+  string name = 2; //服务名
+  Worker worker = 3; //worker使用方式
+  repeated Ntc ntc = 4; //监听的通知
+}
+
+message Worker {
+  EWorkerMode mode = 1;
+  EOrigin origin = 2;
+  string key = 3;
+}
+
+enum EOrigin {
+  Pkt = 0;
+  Head = 1;
+  Service = 2;
+}
+
+enum EWorkerMode {
+  Go = 0;
+  Active = 1; //需要key
+  Share = 2; //需要key
+  Global = 3;
+  Self = 4;
+}
+
+extend google.protobuf.MessageOptions {
+  int32 code = 151100;
+  repeated string role = 151101;
+  repeated Fail fail = 151102;
+  bool schema = 151103;
+  repeated Idx idx =  151104;
+  Worker worker = 151105;
+}
+
+message Fail {
+  int32 code = 1;
+  string key = 2;
+  string msg = 3;
+}
+
+enum EIdx {
+  Asc = 0;
+  Desc = 1;
+  TwoDSphere = 2;
+  Text = 3;
+}
+
+message IdxField {
+  string name = 1;
+  EIdx type = 2; //索引类型
+}
+
+message Idx {
+  repeated IdxField fields = 1;
+  bool unique = 2; //唯一索引
+  string name = 3; //索引名
+  int64 ttl = 4; //用于在一定时间后或在特定的时刻自动从集合中删除文档
+  bool sparse = 5;//稀疏索引仅包含具有索引字段的文档条目，即使索引字段包含空值也是如此。索引会跳过任何缺少索引字段的文档
+}
