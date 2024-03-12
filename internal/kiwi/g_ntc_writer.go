@@ -56,7 +56,7 @@ func (w *gNtcWriter) saveSvc() error {
 		headBuilder := &strings.Builder{}
 		headBuilder.WriteString("package " + svc)
 		watchBuilder := &strings.Builder{}
-		watchBuilder.WriteString("\n\nfunc WatchNotice() {")
+		watchBuilder.WriteString("\n\nfunc (svc *svc) watchNtc() {")
 		writeImport := false
 		writeUtil := false
 		writeCommon := false
@@ -150,7 +150,7 @@ func (w *gNtcWriter) saveSvc() error {
 			}
 		}
 
-		path := fmt.Sprintf("%s/watch.go", svc)
+		path := fmt.Sprintf("%s/ntc_prc.go", svc)
 		err := w.save(path, headBuilder.String()+watchBuilder.String())
 		if err != nil {
 			return err

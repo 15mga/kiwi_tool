@@ -20,7 +20,6 @@ func newBuilder(plugin *protogen.Plugin, module, db string, playerRole string) *
 	b.addWriters(
 		NewCodecWriter(),
 		NewFailCodeWriter(),
-		//NewPusWriter(),
 		NewReqWriter(),
 		NewReqResWriter(),
 		NewSvcWriter(),

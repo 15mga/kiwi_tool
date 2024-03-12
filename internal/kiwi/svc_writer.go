@@ -68,6 +68,9 @@ func (w *svcWriter) Save() error {
 	}
 	w.svcBuilder.WriteString("\n\ts.registerReq()")
 	w.svcBuilder.WriteString("\n\ts.bindReqToRes()")
+	if len(w.svc.WatchNtc) > 0 {
+		w.svcBuilder.WriteString("\n\ts.watchNtc()")
+	}
 	w.svcBuilder.WriteString("\n}")
 	w.svcBuilder.WriteString("\n\nfunc (s *svc) Shutdown() {")
 	w.svcBuilder.WriteString("\n}")

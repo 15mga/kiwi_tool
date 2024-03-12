@@ -9,23 +9,23 @@ import (
 )
 
 func NewReqPrcWriter() IWriter {
-	return &pusReqPrcWriter{}
+	return &reqPrcWriter{}
 }
 
-type pusReqPrcWriter struct {
+type reqPrcWriter struct {
 	baseWriter
 	headBuilder *strings.Builder
 	svcBuilder  *strings.Builder
 	public      map[string]struct{}
 }
 
-func (w *pusReqPrcWriter) Reset() {
+func (w *reqPrcWriter) Reset() {
 	w.public = make(map[string]struct{})
 	w.headBuilder = &strings.Builder{}
 	w.svcBuilder = &strings.Builder{}
 }
 
-func (w *pusReqPrcWriter) WriteHeader() {
+func (w *reqPrcWriter) WriteHeader() {
 	w.headBuilder.WriteString("package " + w.Svc().Name)
 	w.headBuilder.WriteString("\n\nimport (")
 	w.headBuilder.WriteString("\n\t\"github.com/15mga/kiwi\"")
@@ -34,7 +34,7 @@ func (w *pusReqPrcWriter) WriteHeader() {
 	w.svcBuilder.WriteString("\n\nfunc (s *svc) registerReq() {")
 }
 
-func (w *pusReqPrcWriter) WriteMsg(idx int, msg *Msg) {
+func (w *reqPrcWriter) WriteMsg(idx int, msg *Msg) {
 	svcStr := "_svc"
 	svcBuilder := w.svcBuilder
 	onStr := fmt.Sprintf("%s.%s", svcStr, HandlerPrefix)
@@ -103,16 +103,16 @@ func (w *pusReqPrcWriter) WriteMsg(idx int, msg *Msg) {
 	w.SetDirty(true)
 }
 
-func (w *pusReqPrcWriter) WriteFooter() {
+func (w *reqPrcWriter) WriteFooter() {
 	w.headBuilder.WriteString("\n)")
 	w.writeSvcFoot(w.svcBuilder)
 }
 
-func (w *pusReqPrcWriter) writeSvcFoot(builder *strings.Builder) {
+func (w *reqPrcWriter) writeSvcFoot(builder *strings.Builder) {
 	builder.WriteString("\n}")
 }
 
-func (w *pusReqPrcWriter) Save() error {
+func (w *reqPrcWriter) Save() error {
 	path := fmt.Sprintf("%s/req_prc.go", w.Svc().Name)
 	return w.save(path, w.headBuilder.String()+w.svcBuilder.String())
 }
