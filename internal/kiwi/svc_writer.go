@@ -66,7 +66,7 @@ func (w *svcWriter) Save() error {
 	if w.hasSchema() {
 		w.svcBuilder.WriteString("\n\ts.initColl()")
 	}
-	w.svcBuilder.WriteString("\n\ts.registerPusAndReq()")
+	w.svcBuilder.WriteString("\n\ts.registerReq()")
 	w.svcBuilder.WriteString("\n\ts.bindReqToRes()")
 	w.svcBuilder.WriteString("\n}")
 	w.svcBuilder.WriteString("\n\nfunc (s *svc) Shutdown() {")

@@ -24,7 +24,7 @@ func newBuilder(plugin *protogen.Plugin, module, db string, playerRole string) *
 		NewReqWriter(),
 		NewReqResWriter(),
 		NewSvcWriter(),
-		NewPusReqPrcWriter(),
+		NewReqPrcWriter(),
 	)
 	switch db {
 	case "mgo":

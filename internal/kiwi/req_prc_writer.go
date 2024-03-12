@@ -2,12 +2,13 @@ package kiwi
 
 import (
 	"fmt"
+	tool "github.com/15mga/kiwi_tool"
 	"strings"
 
 	"github.com/15mga/kiwi/util"
 )
 
-func NewPusReqPrcWriter() IWriter {
+func NewReqPrcWriter() IWriter {
 	return &pusReqPrcWriter{}
 }
 
@@ -30,7 +31,7 @@ func (w *pusReqPrcWriter) WriteHeader() {
 	w.headBuilder.WriteString("\n\t\"github.com/15mga/kiwi\"")
 	w.headBuilder.WriteString(fmt.Sprintf("\n\t\"%s/internal/common\"", w.Module()))
 
-	w.svcBuilder.WriteString("\n\nfunc (s *svc) registerPusAndReq() {")
+	w.svcBuilder.WriteString("\n\nfunc (s *svc) registerReq() {")
 }
 
 func (w *pusReqPrcWriter) WriteMsg(idx int, msg *Msg) {
@@ -112,6 +113,6 @@ func (w *pusReqPrcWriter) writeSvcFoot(builder *strings.Builder) {
 }
 
 func (w *pusReqPrcWriter) Save() error {
-	path := fmt.Sprintf("%s/pus_req_prc.go", w.Svc().Name)
+	path := fmt.Sprintf("%s/req_prc.go", w.Svc().Name)
 	return w.save(path, w.headBuilder.String()+w.svcBuilder.String())
 }
