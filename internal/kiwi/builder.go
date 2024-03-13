@@ -5,11 +5,11 @@ import (
 	"sort"
 )
 
-func newBuilder(plugin *protogen.Plugin, module, db string, playerRole string) *builder {
+func newBuilder(plugin *protogen.Plugin, module, db string, playerRoles map[string]struct{}) *builder {
 	b := &builder{
-		plugin:     plugin,
-		module:     module,
-		playerRole: playerRole,
+		plugin:      plugin,
+		module:      module,
+		playerRoles: playerRoles,
 	}
 	b.addGlobalWriters(
 		NewGCsWriter(),
@@ -37,7 +37,12 @@ type builder struct {
 	module        string
 	globalWriters []IWriter
 	writers       []IWriter
-	playerRole    string
+	playerRoles   map[string]struct{}
+}
+
+func (b *builder) isPlayerRole(role string) bool {
+	_, ok := b.playerRoles[role]
+	return ok
 }
 
 func (b *builder) addGlobalWriters(writers ...IWriter) {

@@ -63,7 +63,7 @@ func (w *gCsWriter) WriteFooter() {
 func (w *gCsWriter) isPlayerMsg(msg *Msg) bool {
 	roleSlc := proto.GetExtension(msg.Msg.Desc.Options(), tool.E_Role).([]string)
 	for _, role := range roleSlc {
-		if w.Builder().playerRole == role {
+		if w.Builder().isPlayerRole(role) {
 			return true
 		}
 	}
@@ -73,45 +73,30 @@ func (w *gCsWriter) isPlayerMsg(msg *Msg) bool {
 func (w *gCsWriter) WriteMsg(idx int, msg *Msg) {
 	switch msg.Type {
 	case EMsgReq:
-		reqName := msg.Name
-		resName := reqToRes(reqName)
 		if !w.isPlayerMsg(msg) {
-			resMsg, ok := _NameToMsg[resName]
-			if !ok {
-				return
-			}
-			if !w.isPlayerMsg(resMsg) {
-				return
-			}
+			return
 		}
 		reqCode := kiwi.MergeSvcCode(msg.Svc.Id, msg.Code)
 		w.typeToCodeHeader.WriteString(fmt.Sprintf("\n\t\t\t{typeof(%s), %d},",
 			msg.Name, reqCode))
-		_, ok := w.svc.Res[resName]
+	case EMsgRes:
+		resName := msg.Name
+		reqName := resToReq(resName)
+		reqMsg, ok := _NameToMsg[reqName]
+		if !ok || !w.isPlayerMsg(reqMsg) {
+			return
+		}
+		resCode := kiwi.MergeSvcCode(msg.Svc.Id, msg.Code)
+		w.codeToTypeHeader.WriteString(fmt.Sprintf("\n\t\t\t{%d, %s.Parser.ParseFrom},",
+			resCode, msg.Name))
+		_, ok = w.svc.Req[reqName]
 		if ok {
-			res := w.svc.Res[resName]
-			resCode := kiwi.MergeSvcCode(res.Svc.Id, res.Code)
+			req := w.svc.Req[reqName]
+			reqCode := kiwi.MergeSvcCode(req.Svc.Id, req.Code)
 			w.reqResHeader.WriteString(fmt.Sprintf("\n\t\t\t{%d, %d},",
 				reqCode, resCode))
 		}
-	case EMsgRes:
-		resName := msg.Name
-		if !w.isPlayerMsg(msg) {
-			reqName := resToReq(resName)
-			reqMsg, ok := _NameToMsg[reqName]
-			if !ok {
-				return
-			}
-			if !w.isPlayerMsg(reqMsg) {
-				return
-			}
-		}
-		w.codeToTypeHeader.WriteString(fmt.Sprintf("\n\t\t\t{%d, %s.Parser.ParseFrom},",
-			kiwi.MergeSvcCode(msg.Svc.Id, msg.Code), msg.Name))
-	case EMsgNtc:
-		if !w.isPlayerMsg(msg) {
-			return
-		}
+	case EMsgPus:
 		ntcCode := kiwi.MergeSvcCode(msg.Svc.Id, msg.Code)
 		w.typeToCodeHeader.WriteString(fmt.Sprintf("\n\t\t\t{typeof(%s), %d},",
 			msg.Name, ntcCode))

@@ -28,9 +28,10 @@ func Run() {
 			}
 		}
 		roles := strings.Split(*roleStr, "_")
-		for i, role := range roles {
-			roles[i] = strings.TrimSpace(role)
+		roleMap := make(map[string]struct{}, len(roles))
+		for _, role := range roles {
+			roleMap[strings.TrimSpace(role)] = struct{}{}
 		}
-		return newBuilder(plugin, *module, *db, *roleStr).build()
+		return newBuilder(plugin, *module, *db, roleMap).build()
 	})
 }
