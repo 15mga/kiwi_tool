@@ -13,13 +13,14 @@ func newBuilder(plugin *protogen.Plugin, module, db string, playerRoles map[stri
 	}
 	b.addGlobalWriters(
 		NewGCsWriter(),
+		newGFailCodeWriter(),
 		NewGNtcWriter(),
 		NewGRoleWriter(),
 		NewGSvcWriter(),
 	)
 	b.addWriters(
 		NewCodecWriter(),
-		NewFailCodeWriter(),
+		//NewFailCodeWriter(),
 		NewReqWriter(),
 		NewReqResWriter(),
 		NewSvcWriter(),

@@ -43,23 +43,25 @@ func Run() {
 				if !ok {
 					continue
 				}
-				for _, fd := range st.Fields.List {
-					if len(fd.Names) != 1 || fd.Tag == nil {
+				for _, field := range st.Fields.List {
+					if len(field.Names) != 1 || field.Tag == nil {
 						continue
 					}
-					fn := fd.Names[0].Name
-					val := fd.Tag.Value
+					fieldName := field.Names[0].Name
+					val := field.Tag.Value
 					if strings.Index(val, "bson:") > -1 {
 						continue
 					}
 					valLen := len(val)
 					is := ""
-					if fn == "Id" {
+					if fieldName == "Id" {
 						is = " bson:\"_id\""
 					} else {
-						is = fmt.Sprintf(" bson:\"%s\"", util.ToUnderline(fn))
+						is = fmt.Sprintf(" bson:\"%s\"", util.ToUnderline(fieldName))
 					}
-					fd.Tag.Value = val[:valLen-1] + is + val[valLen-1:]
+					field.Tag.Value = val[:valLen-1] + is + val[valLen-1:]
+					//移除忽略 0 值
+					field.Tag.Value = strings.Replace(field.Tag.Value, ",omitempty", "", -1)
 				}
 			}
 		}
