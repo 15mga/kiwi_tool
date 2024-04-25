@@ -78,7 +78,7 @@ func (w *gNtcWriter) saveSvc() error {
 					switch worker.Origin {
 					case tool.EOrigin_Head:
 						writeUtil = true
-						watchBuilder.WriteString(fmt.Sprintf("\n\t\tkey, ok := util.MGet[string](ntc.Head(), \"%s\")", worker.Key))
+						watchBuilder.WriteString(fmt.Sprintf("\n\t\tkey, ok := util.MGet[string](ntc.Data(), \"%s\")", worker.Key))
 						watchBuilder.WriteString("\n\t\tif ok {")
 						watchBuilder.WriteString(fmt.Sprintf("\n\t\tcore.ActivePrcNtc[*pb.%s](ntc, key, _svc.%s%s)",
 							c, HandlerPrefix, c))
@@ -98,7 +98,7 @@ func (w *gNtcWriter) saveSvc() error {
 					switch worker.Origin {
 					case tool.EOrigin_Head:
 						writeUtil = true
-						watchBuilder.WriteString(fmt.Sprintf("\n\t\tkey, ok := util.MGet[string](ntc.Head(), \"%s\")", worker.Key))
+						watchBuilder.WriteString(fmt.Sprintf("\n\t\tkey, ok := util.MGet[string](ntc.Data(), \"%s\")", worker.Key))
 						watchBuilder.WriteString("\n\t\tif ok {")
 						watchBuilder.WriteString(fmt.Sprintf("\n\t\tcore.SharePrcNtc[*pb.%s](ntc, key, _svc.%s%s)",
 							c, HandlerPrefix, c))

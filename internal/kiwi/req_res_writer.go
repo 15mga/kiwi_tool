@@ -27,7 +27,7 @@ func (w *reqResWriter) WriteHeader() {
 	w.builder.WriteString(fmt.Sprintf("\n\t\"%s/internal/common\"", w.Module()))
 	w.builder.WriteString("\n\n\t\"github.com/15mga/kiwi\"")
 	w.builder.WriteString("\n)")
-	w.builder.WriteString("\n\nfunc (s *svc) bindReqToRes() {")
+	w.builder.WriteString("\n\nfunc BindReqToRes() {")
 }
 
 func (w *reqResWriter) WriteMsg(idx int, msg *Msg) {

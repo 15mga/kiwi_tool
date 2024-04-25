@@ -62,12 +62,12 @@ func (w *svcWriter) Save() error {
 	w.svcBuilder.WriteString(fmt.Sprintf("\n\t return common.%s", util.ToBigHump(svcName)))
 	w.svcBuilder.WriteString("\n}")
 	w.svcBuilder.WriteString("\n\nfunc (s *svc) Start() {")
-	w.svcBuilder.WriteString("\n\ts.bindCodecFac()")
+	w.svcBuilder.WriteString("\n\tBindCodecFac()")
 	if w.hasSchema() {
 		w.svcBuilder.WriteString("\n\ts.initColl()")
 	}
 	w.svcBuilder.WriteString("\n\ts.registerReq()")
-	w.svcBuilder.WriteString("\n\ts.bindReqToRes()")
+	w.svcBuilder.WriteString("\n\tBindReqToRes()")
 	if len(w.svc.WatchNtc) > 0 {
 		w.svcBuilder.WriteString("\n\ts.watchNtc()")
 	}

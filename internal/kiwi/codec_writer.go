@@ -32,7 +32,7 @@ func (w *codecWriter) WriteHeader() {
 	w.constBuilder.WriteString("\n)")
 	w.constBuilder.WriteString("\n\nconst (")
 
-	w.facBuilder.WriteString("\n\nfunc (svc *svc) bindCodecFac() {")
+	w.facBuilder.WriteString("\n\nfunc BindCodecFac() {")
 }
 
 func (w *codecWriter) WriteMsg(idx int, msg *Msg) {

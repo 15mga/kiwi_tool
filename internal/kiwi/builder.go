@@ -19,6 +19,7 @@ func newBuilder(plugin *protogen.Plugin, module, db string, playerRoles map[stri
 		NewGSvcWriter(),
 	)
 	b.addWriters(
+		NewMockWriter(),
 		NewCodecWriter(),
 		//NewFailCodeWriter(),
 		NewReqWriter(),
