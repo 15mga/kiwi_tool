@@ -68,12 +68,7 @@ func (w *mockWriter) Save() error {
 			w.handleBuilder.WriteString("\n\t\t\t\"req\": req,")
 			w.handleBuilder.WriteString("\n\t\t})")
 			w.handleBuilder.WriteString("\n\t}")
-			w.handleBuilder.WriteString("\n\tsvc, code := kiwi.Codec().MsgToSvcCode(req)")
-			w.handleBuilder.WriteString("\n\tbytes, err := common.PackUserReq(svc, code, req)")
-			w.handleBuilder.WriteString("\n\tif err != nil {")
-			w.handleBuilder.WriteString("\n\t\treturn err")
-			w.handleBuilder.WriteString("\n\t}")
-			w.handleBuilder.WriteString("\n\treturn s.client.Dialer().Agent().Send(bytes)")
+			w.handleBuilder.WriteString("\n\treturn s.Req(req)")
 			w.handleBuilder.WriteString("\n}")
 		case EMsgRes:
 			w.builder.WriteString(fmt.Sprintf("\n\ts.client.BindNetMsg(&pb.%s{}, s.on%s)", msg.Name, msg.Name))
@@ -90,6 +85,14 @@ func (w *mockWriter) Save() error {
 	}
 	w.builder.WriteString("\n}")
 	w.builder.WriteString("\n\nfunc (s *svc) Dispose() {")
+	w.builder.WriteString("\n}")
+	w.builder.WriteString("\n\nfunc (s *svc) Req(req util.IMsg) *util.Err {")
+	w.builder.WriteString("\n\tsvc, code := kiwi.Codec().MsgToSvcCode(req)")
+	w.builder.WriteString("\n\tbytes, err := common.PackUserReq(svc, code, req)")
+	w.builder.WriteString("\n\tif err != nil {")
+	w.builder.WriteString("\n\t\treturn err")
+	w.builder.WriteString("\n\t}")
+	w.builder.WriteString("\n\treturn s.client.Dialer().Agent().Send(bytes)")
 	w.builder.WriteString("\n}")
 
 	fp := fmt.Sprintf("mock/%s/svc_gen.go", svcName)
