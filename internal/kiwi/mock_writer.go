@@ -65,10 +65,7 @@ func (w *mockWriter) Save() error {
 			w.handleBuilder.WriteString("\n\tif !ok {")
 			w.handleBuilder.WriteString(fmt.Sprintf("\n\t\treq = &pb.%s{}", msg.Name))
 			w.handleBuilder.WriteString("\n\t}")
-			w.handleBuilder.WriteString(fmt.Sprintf("\n\tfn, ok := util.MGet[func(*mock.Client, util.IMsg)](s.client.Graph().Data(), \"%sDecorator\")", msg.Method))
-			w.handleBuilder.WriteString("\n\tif ok && fn != nil {")
-			w.handleBuilder.WriteString("\n\t\tfn(s.client, req)")
-			w.handleBuilder.WriteString("\n\t}")
+			w.handleBuilder.WriteString("\n\ts.client.DecorateReq(req)")
 			w.handleBuilder.WriteString("\n\treturn s.Req(req)")
 			w.handleBuilder.WriteString("\n}")
 		case EMsgRes:
@@ -80,7 +77,7 @@ func (w *mockWriter) Save() error {
 		case EMsgPus:
 			w.builder.WriteString(fmt.Sprintf("\n\ts.client.BindNetMsg(&pb.%s{}, s.on%s)", msg.Name, msg.Name))
 			w.handleBuilder.WriteString(fmt.Sprintf("\n\nfunc (s *svc) on%s(msg util.IMsg) (point string, data any) {", msg.Name))
-			w.handleBuilder.WriteString(fmt.Sprintf("\n\tkiwi.Debug(\"on %s\", util.M{\"msg\":msg})", msg.Name))
+			w.handleBuilder.WriteString(fmt.Sprintf("\n\ts.client.Graph().Data().Set(\"%s\", msg)", msg.Name))
 			w.handleBuilder.WriteString("\n\treturn \"\", nil")
 			w.handleBuilder.WriteString("\n}")
 		}
