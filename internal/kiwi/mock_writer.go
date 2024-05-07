@@ -52,9 +52,11 @@ func (w *mockWriter) Save() error {
 	w.builder.WriteString("\n\ntype svc struct {")
 	w.builder.WriteString("\nclient *mock.Client")
 	w.builder.WriteString("\n}")
-	w.builder.WriteString("\n\nfunc Init(client *mock.Client) {")
+	w.builder.WriteString("\n\nfunc Init() {")
 	w.builder.WriteString(fmt.Sprintf("\n%s.BindCodecFac()", svcName))
 	w.builder.WriteString(fmt.Sprintf("\n%s.BindReqToRes()", svcName))
+	w.builder.WriteString("\n}")
+	w.builder.WriteString("\n\nfunc InitClient(client *mock.Client) {")
 	w.builder.WriteString("\n\ts := &Svc{svc{client: client}}")
 	for _, msg := range w.msgSlc {
 		switch msg.Type {
