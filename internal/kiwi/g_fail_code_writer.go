@@ -23,26 +23,48 @@ func (w *gFailCodeWriter) Reset() {
 	w.keyToCode = make(map[string]*tool.Fail)
 }
 
-func (w *gFailCodeWriter) WriteMsg(idx int, msg *Msg) {
-	if msg.Type != EMsgRes {
-		return
-	}
-	slc := proto.GetExtension(msg.Msg.Desc.Options(), tool.E_Fail).([]*tool.Fail)
-	if len(slc) == 0 {
-		return
-	}
-	w.SetDirty(true)
-	for _, fail := range slc {
-		fail.Key = strings.TrimSpace(fail.Key)
-		fail.Msg = strings.TrimSpace(fail.Msg)
-		_, ok := w.keyToCode[fail.Key]
-		if ok {
-			continue
+func (w *gFailCodeWriter) SetSvc(svc *Svc) {
+	w.baseWriter.SetSvc(svc)
+	for _, file := range svc.Files {
+		s := proto.GetExtension(file.Desc.Options(), tool.E_Svc).(*tool.Svc)
+		slc := s.Fail
+		if len(slc) == 0 {
+			return
 		}
-		w.keyToCode[fail.Key] = fail
-		w.failSlc = append(w.failSlc, fail)
+		w.SetDirty(true)
+		for _, fail := range slc {
+			fail.Key = strings.TrimSpace(fail.Key)
+			fail.Msg = strings.TrimSpace(fail.Msg)
+			_, ok := w.keyToCode[fail.Key]
+			if ok {
+				continue
+			}
+			w.keyToCode[fail.Key] = fail
+			w.failSlc = append(w.failSlc, fail)
+		}
 	}
 }
+
+//func (w *gFailCodeWriter) WriteMsg(idx int, msg *Msg) {
+//	if msg.Type != EMsgRes {
+//		return
+//	}
+//	slc := proto.GetExtension(msg.Msg.Desc.Options(), tool.E_Fail).([]*tool.Fail)
+//	if len(slc) == 0 {
+//		return
+//	}
+//	w.SetDirty(true)
+//	for _, fail := range slc {
+//		fail.Key = strings.TrimSpace(fail.Key)
+//		fail.Msg = strings.TrimSpace(fail.Msg)
+//		_, ok := w.keyToCode[fail.Key]
+//		if ok {
+//			continue
+//		}
+//		w.keyToCode[fail.Key] = fail
+//		w.failSlc = append(w.failSlc, fail)
+//	}
+//}
 
 func (w *gFailCodeWriter) Save() error {
 	sort.Slice(w.failSlc, func(i, j int) bool {

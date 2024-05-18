@@ -70,7 +70,7 @@ func (w *gNtcWriter) Save() error {
 
 				watchBuilder.WriteString(fmt.Sprintf("\n\tkiwi.Router().WatchNotice(&pb.%s{}, func(ntc kiwi.IRcvNotice) {",
 					c))
-				switch worker.Worker {
+				switch worker.Mode {
 				case tool.EWorker_Go:
 					watchBuilder.WriteString(fmt.Sprintf("\n\t\tcore.GoPrcNtc[*pb.%s](ntc, _svc.%s%s)",
 						c, HandlerPrefix, c))
