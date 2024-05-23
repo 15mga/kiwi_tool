@@ -33,7 +33,7 @@ func (w *gSvcWriter) Save() error {
 
 	nameToSvcBuilder.WriteString("\n\nvar NameToSvc = map[string]kiwi.TSvc{")
 
-	for _, svc := range _SvcSlc {
+	for _, svc := range w.Builder().svcSlc {
 		svcName := svc.Name
 		bigSvcName := util.ToBigHump(svcName)
 		constBuilder.WriteString(fmt.Sprintf("\n\t%s kiwi.TSvc = %d", bigSvcName, svc.Id))
@@ -53,6 +53,6 @@ func (w *gSvcWriter) Save() error {
 		nameToSvcBuilder.String())
 }
 
-func (w *gSvcWriter) SetSvc(svc *Svc) {
+func (w *gSvcWriter) SetSvc(svc *svc) {
 	w.SetDirty(true)
 }

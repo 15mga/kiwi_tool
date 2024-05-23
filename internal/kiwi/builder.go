@@ -1,7 +1,9 @@
 package kiwi
 
 import (
+	tool "github.com/15mga/kiwi_tool"
 	"google.golang.org/protobuf/compiler/protogen"
+	"google.golang.org/protobuf/proto"
 	"sort"
 )
 
@@ -10,6 +12,8 @@ func newBuilder(plugin *protogen.Plugin, module, db string, playerRoles map[stri
 		plugin:      plugin,
 		module:      module,
 		playerRoles: playerRoles,
+		svcMap:      make(map[string]*svc),
+		msgMap:      make(map[string]*Msg),
 	}
 	b.addGlobalWriters(
 		NewGCsWriter(),
@@ -22,7 +26,6 @@ func newBuilder(plugin *protogen.Plugin, module, db string, playerRoles map[stri
 	b.addWriters(
 		NewMockWriter(),
 		NewCodecWriter(),
-		//NewFailCodeWriter(),
 		NewReqWriter(),
 		NewReqResWriter(),
 		NewSvcWriter(),
@@ -41,6 +44,9 @@ type builder struct {
 	globalWriters []IWriter
 	writers       []IWriter
 	playerRoles   map[string]struct{}
+	svcMap        map[string]*svc
+	svcSlc        []*svc
+	msgMap        map[string]*Msg
 }
 
 func (b *builder) isPlayerRole(role string) bool {
@@ -63,14 +69,42 @@ func (b *builder) addWriters(writers ...IWriter) {
 }
 
 func (b *builder) build() error {
-	sort.Slice(_SvcSlc, func(i, j int) bool {
-		return _SvcSlc[i].Id < _SvcSlc[j].Id
+	for _, file := range b.plugin.Files {
+		err := b.prcFile(file)
+		if err != nil {
+			return err
+		}
+	}
+	sort.Slice(b.svcSlc, func(i, j int) bool {
+		return b.svcSlc[i].Id < b.svcSlc[j].Id
 	})
+	return b.write()
+}
+
+func (b *builder) prcFile(file *protogen.File) error {
+	extSvc := proto.GetExtension(file.Desc.Options(), tool.E_Svc).(*tool.Svc)
+	if extSvc == nil {
+		return nil
+	}
+	svcName := extSvc.Name
+	if svcName == "" {
+		return nil
+	}
+	svc, ok := b.svcMap[svcName]
+	if !ok {
+		svc = newSvc(svcName)
+		b.svcMap[svcName] = svc
+		b.svcSlc = append(b.svcSlc, svc)
+	}
+	return svc.AddFile(file)
+}
+
+func (b *builder) write() error {
 	for _, writer := range b.globalWriters {
 		writer.Reset()
 		writer.WriteHeader()
 	}
-	for _, svc := range _SvcSlc {
+	for _, svc := range b.svcSlc {
 		msgSlc := svc.MsgSlc
 		if len(msgSlc) == 0 {
 			continue

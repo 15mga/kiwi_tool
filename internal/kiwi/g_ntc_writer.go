@@ -27,7 +27,7 @@ func (w *gNtcWriter) Reset() {
 	w.ntcToWatcher = make(map[string][]*ntcWatcher)
 }
 
-func (w *gNtcWriter) SetSvc(svc *Svc) {
+func (w *gNtcWriter) SetSvc(svc *svc) {
 	w.baseWriter.SetSvc(svc)
 	svcName := svc.Name
 	w.SetDirty(true)
@@ -68,7 +68,7 @@ func (w *gNtcWriter) Save() error {
 				ntcBuilder.WriteString("\n\tpkt.Err2(util.EcNotImplement, util.M{\"ntc\": ntc})")
 				ntcBuilder.WriteString("\n}")
 
-				watchBuilder.WriteString(fmt.Sprintf("\n\tkiwi.Router().WatchNotice(&pb.%s{}, func(ntc kiwi.IRcvNotice) {",
+				watchBuilder.WriteString(fmt.Sprintf("\n\tsvc.WatchNotice(&pb.%s{}, func(ntc kiwi.IRcvNotice) {",
 					c))
 				switch worker.Mode {
 				case tool.EWorker_Go:

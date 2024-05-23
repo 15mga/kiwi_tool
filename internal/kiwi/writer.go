@@ -15,8 +15,8 @@ type IWriter interface {
 	WriteHeader()
 	WriteMsg(idx int, msg *Msg)
 	WriteFooter()
-	SetSvc(svc *Svc)
-	Svc() *Svc
+	SetSvc(svc *svc)
+	Svc() *svc
 	Reset()
 	Save() error
 }
@@ -24,7 +24,7 @@ type IWriter interface {
 type baseWriter struct {
 	bdr   *builder
 	dirty bool
-	svc   *Svc
+	svc   *svc
 }
 
 func (w *baseWriter) setBuilder(builder *builder) {
@@ -68,11 +68,11 @@ func (w *baseWriter) SetDirty(dirty bool) {
 	w.dirty = dirty
 }
 
-func (w *baseWriter) SetSvc(svc *Svc) {
+func (w *baseWriter) SetSvc(svc *svc) {
 	w.svc = svc
 }
 
-func (w *baseWriter) Svc() *Svc {
+func (w *baseWriter) Svc() *svc {
 	return w.svc
 }
 

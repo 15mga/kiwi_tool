@@ -26,7 +26,7 @@ type Msg struct {
 	Name   string
 	Method string
 	Code   kiwi.TCode
-	Svc    *Svc
+	Svc    *svc
 	Msg    *protogen.Message
 	Worker *tool.Worker
 }
@@ -61,7 +61,7 @@ func getEMsg(msg *protogen.Message) EMsg {
 	}
 }
 
-func NewMsg(svc *Svc, typ EMsg, msg *protogen.Message) *Msg {
+func NewMsg(svc *svc, typ EMsg, msg *protogen.Message) *Msg {
 	msgFullName := msg.GoIdent.GoName
 	return &Msg{
 		Type:   typ,

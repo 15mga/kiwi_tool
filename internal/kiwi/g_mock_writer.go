@@ -12,7 +12,7 @@ func NewGMockWriter() IWriter {
 type gMockWriter struct {
 	baseWriter
 	builder *strings.Builder
-	svcSlc  []*Svc
+	svcSlc  []*svc
 }
 
 func (w *gMockWriter) Reset() {
@@ -20,7 +20,7 @@ func (w *gMockWriter) Reset() {
 	w.svcSlc = nil
 }
 
-func (w *gMockWriter) SetSvc(svc *Svc) {
+func (w *gMockWriter) SetSvc(svc *svc) {
 	w.dirty = true
 	w.svcSlc = append(w.svcSlc, svc)
 }

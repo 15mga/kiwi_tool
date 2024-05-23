@@ -18,15 +18,6 @@ func Run() {
 		if err != nil {
 			return err
 		}
-		for _, f := range plugin.Files {
-			if !f.Generate {
-				continue
-			}
-			err := addSvc(f)
-			if err != nil {
-				return err
-			}
-		}
 		roles := strings.Split(*roleStr, "_")
 		roleMap := make(map[string]struct{}, len(roles))
 		for _, role := range roles {
