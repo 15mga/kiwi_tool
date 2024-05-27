@@ -28,33 +28,34 @@ namespace Kiwi {
             "ci5wcm90byIwCgNOdGMSCwoDc3ZjGAEgASgJEhwKBWl0ZW1zGAIgAygLMg0u",
             "a2l3aS5OdGNJdGVtImAKB050Y0l0ZW0SDAoEY29kZRgBIAEoCRIbCgRtb2Rl",
             "GAIgASgOMg0ua2l3aS5FV29ya2VyEh0KBm9yaWdpbhgDIAEoDjINLmtpd2ku",
-            "RU9yaWdpbhILCgNrZXkYBCABKAkibwoDU3ZjEgoKAmlkGAEgASgFEgwKBG5h",
+            "RU9yaWdpbhILCgNrZXkYBCABKAkifwoDU3ZjEgoKAmlkGAEgASgFEgwKBG5h",
             "bWUYAiABKAkSHAoGd29ya2VyGAMgASgLMgwua2l3aS5Xb3JrZXISFgoDbnRj",
-            "GAQgAygLMgkua2l3aS5OdGMSGAoEZmFpbBgFIAMoCzIKLmtpd2kuRmFpbCJR",
-            "CgZXb3JrZXISGwoEbW9kZRgBIAEoDjINLmtpd2kuRVdvcmtlchIdCgZvcmln",
-            "aW4YAiABKA4yDS5raXdpLkVPcmlnaW4SCwoDa2V5GAMgASgJIi4KBEZhaWwS",
-            "DAoEY29kZRgBIAEoBRILCgNrZXkYAiABKAkSCwoDbXNnGAMgASgJIjIKCElk",
-            "eEZpZWxkEgwKBG5hbWUYASABKAkSGAoEdHlwZRgCIAEoDjIKLmtpd2kuRUlk",
-            "eCJgCgNJZHgSHgoGZmllbGRzGAEgAygLMg4ua2l3aS5JZHhGaWVsZBIOCgZ1",
-            "bmlxdWUYAiABKAgSDAoEbmFtZRgDIAEoCRILCgN0dGwYBCABKAMSDgoGc3Bh",
-            "cnNlGAUgASgIKikKB0VPcmlnaW4SBwoDUGt0EAASCAoESGVhZBABEgsKB1Nl",
-            "cnZpY2UQAio+CgdFV29ya2VyEgYKAkdvEAASCgoGQWN0aXZlEAESCQoFU2hh",
-            "cmUQAhIKCgZHbG9iYWwQAxIICgRTZWxmEAQqMwoERUlkeBIHCgNBc2MQABII",
-            "CgREZXNjEAESDgoKVHdvRFNwaGVyZRACEggKBFRleHQQAzo2CgNzdmMSHC5n",
-            "b29nbGUucHJvdG9idWYuRmlsZU9wdGlvbnMY2ZsJIAEoCzIJLmtpd2kuU3Zj",
-            "Oi8KBGNvZGUSHy5nb29nbGUucHJvdG9idWYuTWVzc2FnZU9wdGlvbnMYvJwJ",
-            "IAEoBTovCgRyb2xlEh8uZ29vZ2xlLnByb3RvYnVmLk1lc3NhZ2VPcHRpb25z",
-            "GL2cCSADKAk6MQoGc2NoZW1hEh8uZ29vZ2xlLnByb3RvYnVmLk1lc3NhZ2VP",
-            "cHRpb25zGL6cCSABKAg6OQoDaWR4Eh8uZ29vZ2xlLnByb3RvYnVmLk1lc3Nh",
-            "Z2VPcHRpb25zGL+cCSADKAsyCS5raXdpLklkeDo/CgZ3b3JrZXISHy5nb29n",
-            "bGUucHJvdG9idWYuTWVzc2FnZU9wdGlvbnMYwJwJIAEoCzIMLmtpd2kuV29y",
-            "a2VyQhxaGmdpdGh1Yi5jb20vMTVtZ2Eva2l3aV90b29sYgZwcm90bzM="));
+            "GAQgAygLMgkua2l3aS5OdGMSGAoEZmFpbBgFIAMoCzIKLmtpd2kuRmFpbBIO",
+            "CgZjb21tb24YBiADKAkiUQoGV29ya2VyEhsKBG1vZGUYASABKA4yDS5raXdp",
+            "LkVXb3JrZXISHQoGb3JpZ2luGAIgASgOMg0ua2l3aS5FT3JpZ2luEgsKA2tl",
+            "eRgDIAEoCSIuCgRGYWlsEgwKBGNvZGUYASABKAUSCwoDa2V5GAIgASgJEgsK",
+            "A21zZxgDIAEoCSIyCghJZHhGaWVsZBIMCgRuYW1lGAEgASgJEhgKBHR5cGUY",
+            "AiABKA4yCi5raXdpLkVJZHgiYAoDSWR4Eh4KBmZpZWxkcxgBIAMoCzIOLmtp",
+            "d2kuSWR4RmllbGQSDgoGdW5pcXVlGAIgASgIEgwKBG5hbWUYAyABKAkSCwoD",
+            "dHRsGAQgASgDEg4KBnNwYXJzZRgFIAEoCCopCgdFT3JpZ2luEgcKA1BrdBAA",
+            "EggKBEhlYWQQARILCgdTZXJ2aWNlEAIqPgoHRVdvcmtlchIGCgJHbxAAEgoK",
+            "BkFjdGl2ZRABEgkKBVNoYXJlEAISCgoGR2xvYmFsEAMSCAoEU2VsZhAEKjMK",
+            "BEVJZHgSBwoDQXNjEAASCAoERGVzYxABEg4KClR3b0RTcGhlcmUQAhIICgRU",
+            "ZXh0EAM6NgoDc3ZjEhwuZ29vZ2xlLnByb3RvYnVmLkZpbGVPcHRpb25zGNmb",
+            "CSABKAsyCS5raXdpLlN2YzovCgRjb2RlEh8uZ29vZ2xlLnByb3RvYnVmLk1l",
+            "c3NhZ2VPcHRpb25zGLycCSABKAU6LwoEcm9sZRIfLmdvb2dsZS5wcm90b2J1",
+            "Zi5NZXNzYWdlT3B0aW9ucxi9nAkgAygJOjEKBnNjaGVtYRIfLmdvb2dsZS5w",
+            "cm90b2J1Zi5NZXNzYWdlT3B0aW9ucxi+nAkgASgIOjkKA2lkeBIfLmdvb2ds",
+            "ZS5wcm90b2J1Zi5NZXNzYWdlT3B0aW9ucxi/nAkgAygLMgkua2l3aS5JZHg6",
+            "PwoGd29ya2VyEh8uZ29vZ2xlLnByb3RvYnVmLk1lc3NhZ2VPcHRpb25zGMCc",
+            "CSABKAsyDC5raXdpLldvcmtlckIcWhpnaXRodWIuY29tLzE1bWdhL2tpd2lf",
+            "dG9vbGIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.Reflection.DescriptorReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Kiwi.EOrigin), typeof(global::Kiwi.EWorker), typeof(global::Kiwi.EIdx), }, new pb::Extension[] { KiwiExtensions.Svc, KiwiExtensions.Code, KiwiExtensions.Role, KiwiExtensions.Schema, KiwiExtensions.Idx, KiwiExtensions.Worker }, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Kiwi.Ntc), global::Kiwi.Ntc.Parser, new[]{ "Svc", "Items" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Kiwi.NtcItem), global::Kiwi.NtcItem.Parser, new[]{ "Code", "Mode", "Origin", "Key" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Kiwi.Svc), global::Kiwi.Svc.Parser, new[]{ "Id", "Name", "Worker", "Ntc", "Fail" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Kiwi.Svc), global::Kiwi.Svc.Parser, new[]{ "Id", "Name", "Worker", "Ntc", "Fail", "Common" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Kiwi.Worker), global::Kiwi.Worker.Parser, new[]{ "Mode", "Origin", "Key" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Kiwi.Fail), global::Kiwi.Fail.Parser, new[]{ "Code", "Key", "Msg" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Kiwi.IdxField), global::Kiwi.IdxField.Parser, new[]{ "Name", "Type" }, null, null, null, null),
@@ -668,6 +669,7 @@ namespace Kiwi {
       worker_ = other.worker_ != null ? other.worker_.Clone() : null;
       ntc_ = other.ntc_.Clone();
       fail_ = other.fail_.Clone();
+      common_ = other.common_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -741,10 +743,27 @@ namespace Kiwi {
     private static readonly pb::FieldCodec<global::Kiwi.Fail> _repeated_fail_codec
         = pb::FieldCodec.ForMessage(42, global::Kiwi.Fail.Parser);
     private readonly pbc::RepeatedField<global::Kiwi.Fail> fail_ = new pbc::RepeatedField<global::Kiwi.Fail>();
+    /// <summary>
+    ///错误码
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public pbc::RepeatedField<global::Kiwi.Fail> Fail {
       get { return fail_; }
+    }
+
+    /// <summary>Field number for the "common" field.</summary>
+    public const int CommonFieldNumber = 6;
+    private static readonly pb::FieldCodec<string> _repeated_common_codec
+        = pb::FieldCodec.ForString(50);
+    private readonly pbc::RepeatedField<string> common_ = new pbc::RepeatedField<string>();
+    /// <summary>
+    ///通用服务
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pbc::RepeatedField<string> Common {
+      get { return common_; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -767,6 +786,7 @@ namespace Kiwi {
       if (!object.Equals(Worker, other.Worker)) return false;
       if(!ntc_.Equals(other.ntc_)) return false;
       if(!fail_.Equals(other.fail_)) return false;
+      if(!common_.Equals(other.common_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -779,6 +799,7 @@ namespace Kiwi {
       if (worker_ != null) hash ^= Worker.GetHashCode();
       hash ^= ntc_.GetHashCode();
       hash ^= fail_.GetHashCode();
+      hash ^= common_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -811,6 +832,7 @@ namespace Kiwi {
       }
       ntc_.WriteTo(output, _repeated_ntc_codec);
       fail_.WriteTo(output, _repeated_fail_codec);
+      common_.WriteTo(output, _repeated_common_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -835,6 +857,7 @@ namespace Kiwi {
       }
       ntc_.WriteTo(ref output, _repeated_ntc_codec);
       fail_.WriteTo(ref output, _repeated_fail_codec);
+      common_.WriteTo(ref output, _repeated_common_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -856,6 +879,7 @@ namespace Kiwi {
       }
       size += ntc_.CalculateSize(_repeated_ntc_codec);
       size += fail_.CalculateSize(_repeated_fail_codec);
+      size += common_.CalculateSize(_repeated_common_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -882,6 +906,7 @@ namespace Kiwi {
       }
       ntc_.Add(other.ntc_);
       fail_.Add(other.fail_);
+      common_.Add(other.common_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -920,6 +945,10 @@ namespace Kiwi {
             fail_.AddEntriesFrom(input, _repeated_fail_codec);
             break;
           }
+          case 50: {
+            common_.AddEntriesFrom(input, _repeated_common_codec);
+            break;
+          }
         }
       }
     #endif
@@ -956,6 +985,10 @@ namespace Kiwi {
           }
           case 42: {
             fail_.AddEntriesFrom(ref input, _repeated_fail_codec);
+            break;
+          }
+          case 50: {
+            common_.AddEntriesFrom(ref input, _repeated_common_codec);
             break;
           }
         }

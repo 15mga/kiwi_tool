@@ -47,6 +47,7 @@ type builder struct {
 	svcMap        map[string]*svc
 	svcSlc        []*svc
 	msgMap        map[string]*Msg
+	commonSvcSlc  []*svc
 }
 
 func (b *builder) isPlayerRole(role string) bool {
@@ -78,7 +79,26 @@ func (b *builder) build() error {
 	sort.Slice(b.svcSlc, func(i, j int) bool {
 		return b.svcSlc[i].Id < b.svcSlc[j].Id
 	})
-	return b.write()
+	svcSlc := make([]*svc, 0, len(b.svcSlc))
+	commonSvcSlc := make([]*svc, 0, len(b.svcSlc))
+	for _, svc := range b.svcSlc {
+		if svc.Common == nil {
+			svcSlc = append(svcSlc, svc)
+		} else {
+			commonSvcSlc = append(commonSvcSlc, svc)
+		}
+	}
+	for _, cs := range commonSvcSlc {
+		for _, msg := range cs.MsgSlc {
+			for _, s := range svcSlc {
+				err := s.AddMsg(msg)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return b.write(svcSlc)
 }
 
 func (b *builder) prcFile(file *protogen.File) error {
@@ -99,12 +119,12 @@ func (b *builder) prcFile(file *protogen.File) error {
 	return svc.AddFile(file)
 }
 
-func (b *builder) write() error {
+func (b *builder) write(svcSlc []*svc) error {
 	for _, writer := range b.globalWriters {
 		writer.Reset()
 		writer.WriteHeader()
 	}
-	for _, svc := range b.svcSlc {
+	for _, svc := range svcSlc {
 		msgSlc := svc.MsgSlc
 		if len(msgSlc) == 0 {
 			continue

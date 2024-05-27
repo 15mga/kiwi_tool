@@ -36,6 +36,7 @@ type svc struct {
 	Msg       map[string]*Msg
 	WatchNtc  []*tool.Ntc
 	Fail      []*tool.Fail
+	Common    []string
 }
 
 func (s *svc) AddFile(file *protogen.File) error {
@@ -65,36 +66,47 @@ func (s *svc) AddFile(file *protogen.File) error {
 			s.Worker = extSvc.Worker
 		}
 	}
+	if extSvc.Common != nil {
+		s.Common = append(s.Common, extSvc.Common...)
+	}
 	s.WatchNtc = append(s.WatchNtc, extSvc.Ntc...)
 	s.Fail = append(s.Fail, extSvc.Fail...)
 
 	for _, m := range file.Messages {
 		t := getEMsg(m)
 		msg := NewMsg(s, t, m)
-		if msg.Type != EMsgNil && msg.Type != EMsgSch {
-			msg1, ok := s.CodeToMsg[msg.Code]
-			if ok {
-				return errors.New(fmt.Sprintf("%s svc, %s and %s had same code %d",
-					s.Name, msg1.Name, msg.Name, msg.Code))
-			}
-			s.CodeToMsg[msg.Code] = msg
+		err := s.AddMsg(msg)
+		if err != nil {
+			return err
 		}
-		s.MsgSlc = append(s.MsgSlc, msg)
+	}
+	return nil
+}
 
-		switch msg.Type {
-		case EMsgNil:
-			s.Msg[msg.Name] = msg
-		case EMsgPus:
-			s.Pus[msg.Name] = msg
-		case EMsgReq:
-			s.Req[msg.Name] = msg
-		case EMsgRes:
-			s.Res[msg.Name] = msg
-		case EMsgNtc:
-			s.Res[msg.Name] = msg
-		case EMsgSch:
-			s.Sch[msg.Name] = msg
+func (s *svc) AddMsg(msg *Msg) error {
+	if msg.Type != EMsgNil && msg.Type != EMsgSch {
+		msg1, ok := s.CodeToMsg[msg.Code]
+		if ok {
+			return errors.New(fmt.Sprintf("%s svc, %s and %s had same code %d",
+				s.Name, msg1.Name, msg.Name, msg.Code))
 		}
+		s.CodeToMsg[msg.Code] = msg
+	}
+	s.MsgSlc = append(s.MsgSlc, msg)
+
+	switch msg.Type {
+	case EMsgNil:
+		s.Msg[msg.Name] = msg
+	case EMsgPus:
+		s.Pus[msg.Name] = msg
+	case EMsgReq:
+		s.Req[msg.Name] = msg
+	case EMsgRes:
+		s.Res[msg.Name] = msg
+	case EMsgNtc:
+		s.Res[msg.Name] = msg
+	case EMsgSch:
+		s.Sch[msg.Name] = msg
 	}
 	return nil
 }

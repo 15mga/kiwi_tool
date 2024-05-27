@@ -27,7 +27,8 @@ message Svc {
   string name = 2; //服务名
   Worker worker = 3; //worker使用方式
   repeated Ntc ntc = 4; //监听的通知
-  repeated Fail fail = 5;
+  repeated Fail fail = 5; //错误码
+  repeated string common = 6; //通用服务
 }
 
 message Worker {
