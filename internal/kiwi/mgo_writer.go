@@ -22,6 +22,7 @@ type mgoWriter struct {
 	fieldBuilder  *strings.Builder
 	idxBuilder    *strings.Builder
 	importBson    bool
+	importMgo     bool
 	fields        map[*Msg][]*protogen.Field
 }
 
@@ -33,13 +34,12 @@ func (w *mgoWriter) Reset() {
 	w.idxBuilder = &strings.Builder{}
 	w.fields = make(map[*Msg][]*protogen.Field)
 	w.importBson = false
+	w.importMgo = false
 }
 
 func (w *mgoWriter) WriteHeader() {
 	w.importBuilder.WriteString("package " + w.Svc().Name)
 	w.importBuilder.WriteString("\n\nimport (")
-	w.importBuilder.WriteString("\n\"github.com/15mga/kiwi/util/mgo\"")
-	w.importBuilder.WriteString("\n\"go.mongodb.org/mongo-driver/mongo\"")
 	w.schemaBuilder.WriteString("\n\nconst (")
 	w.initBuilder.WriteString("\n\nfunc (s *svc) initColl() {")
 }
@@ -129,7 +129,6 @@ func (w *mgoWriter) WriteFooter() {
 		w.fieldBuilder.WriteString("\n")
 	}
 	w.fieldBuilder.WriteString(")")
-
 	w.importBuilder.WriteString("\n)")
 	w.schemaBuilder.WriteString("\n)")
 	w.initBuilder.WriteString("\n}")
@@ -143,6 +142,11 @@ func (w *mgoWriter) WriteMsg(idx int, msg *Msg) {
 	w.addFields(msg)
 	ok := isSchema(msg.Msg)
 	if ok {
+		if !w.importMgo {
+			w.importMgo = true
+			w.importBuilder.WriteString("\n\"github.com/15mga/kiwi/util/mgo\"")
+			w.importBuilder.WriteString("\n\"go.mongodb.org/mongo-driver/mongo\"")
+		}
 		w.writeSchema(msg)
 		w.writeIdx(msg)
 	}

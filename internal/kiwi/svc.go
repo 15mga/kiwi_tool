@@ -74,7 +74,7 @@ func (s *svc) AddFile(file *protogen.File) error {
 
 	for _, m := range file.Messages {
 		t := getEMsg(m)
-		msg := NewMsg(s, t, m)
+		msg := NewMsg(t, m)
 		err := s.AddMsg(msg)
 		if err != nil {
 			return err
@@ -87,12 +87,13 @@ func (s *svc) AddMsg(msg *Msg) error {
 	if msg.Type != EMsgNil && msg.Type != EMsgSch {
 		msg1, ok := s.CodeToMsg[msg.Code]
 		if ok {
-			return errors.New(fmt.Sprintf("%s svc, %s and %s had same code %d",
-				s.Name, msg1.Name, msg.Name, msg.Code))
+			return errors.New(fmt.Sprintf("%s and %s had same code %d",
+				msg1.Name, msg.Name, msg.Code))
 		}
 		s.CodeToMsg[msg.Code] = msg
 	}
 	s.MsgSlc = append(s.MsgSlc, msg)
+	msg.Svc = s
 
 	switch msg.Type {
 	case EMsgNil:

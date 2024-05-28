@@ -71,7 +71,7 @@ func (w *reqPrcWriter) WriteMsg(idx int, msg *Msg) {
 			switch worker.Origin {
 			case tool.EOrigin_Head:
 				writeUtil = true
-				svcBuilder.WriteString(fmt.Sprintf("\n\t\tkey, _ := util.MGet[string](req.Data(), \"%s\")", worker.Key))
+				svcBuilder.WriteString(fmt.Sprintf("\n\t\tkey, _ := util.MGet[string](req.Head(), \"%s\")", worker.Key))
 				svcBuilder.WriteString(fmt.Sprintf("\n\t\tcore.SharePrcReq[*pb.%s](req,  key, %s%s)",
 					name, onStr, msg.Method))
 			case tool.EOrigin_Pkt:

@@ -31,6 +31,15 @@ type Msg struct {
 	Worker *tool.Worker
 }
 
+func (m *Msg) Copy(msg *Msg) {
+	msg.Type = m.Type
+	msg.Name = m.Name
+	msg.Method = m.Method
+	msg.Code = m.Code
+	msg.Msg = m.Msg
+	msg.Worker = m.Worker
+}
+
 func (m *Msg) GetWorker() *tool.Worker {
 	if m.Worker != nil {
 		return m.Worker
@@ -61,13 +70,12 @@ func getEMsg(msg *protogen.Message) EMsg {
 	}
 }
 
-func NewMsg(svc *svc, typ EMsg, msg *protogen.Message) *Msg {
+func NewMsg(typ EMsg, msg *protogen.Message) *Msg {
 	msgFullName := msg.GoIdent.GoName
 	return &Msg{
 		Type:   typ,
 		Name:   msgFullName,
 		Method: msgFullName[:len(msgFullName)-3],
-		Svc:    svc,
 		Code:   kiwi.TCode(proto.GetExtension(msg.Desc.Options(), tool.E_Code).(int32)),
 		Msg:    msg,
 		Worker: proto.GetExtension(msg.Desc.Options(), tool.E_Worker).(*tool.Worker),

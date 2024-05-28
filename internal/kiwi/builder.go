@@ -88,12 +88,16 @@ func (b *builder) build() error {
 			commonSvcSlc = append(commonSvcSlc, svc)
 		}
 	}
-	for _, cs := range commonSvcSlc {
-		for _, msg := range cs.MsgSlc {
-			for _, s := range svcSlc {
-				err := s.AddMsg(msg)
-				if err != nil {
-					return err
+	for _, svc := range commonSvcSlc {
+		for _, svcName := range svc.Common {
+			if s, ok := b.svcMap[svcName]; ok {
+				for _, msg := range svc.MsgSlc {
+					var m Msg
+					msg.Copy(&m)
+					err := s.AddMsg(&m)
+					if err != nil {
+						return err
+					}
 				}
 			}
 		}
