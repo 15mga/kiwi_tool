@@ -70,11 +70,11 @@ func (w *gCsWriter) isPlayerMsg(msg *Msg) bool {
 	return false
 }
 
-func (w *gCsWriter) WriteMsg(idx int, msg *Msg) {
+func (w *gCsWriter) WriteMsg(idx int, msg *Msg) error {
 	switch msg.Type {
 	case EMsgReq:
 		if !w.isPlayerMsg(msg) {
-			return
+			return nil
 		}
 		reqCode := kiwi.MergeSvcCode(msg.Svc.Id, msg.Code)
 		w.typeToCodeHeader.WriteString(fmt.Sprintf("\n\t\t\t{typeof(%s), %d},",
@@ -84,7 +84,7 @@ func (w *gCsWriter) WriteMsg(idx int, msg *Msg) {
 		reqName := resToReq(resName)
 		reqMsg, ok := w.Builder().msgMap[reqName]
 		if !ok || !w.isPlayerMsg(reqMsg) {
-			return
+			return nil
 		}
 		resCode := kiwi.MergeSvcCode(msg.Svc.Id, msg.Code)
 		w.codeToTypeHeader.WriteString(fmt.Sprintf("\n\t\t\t{%d, %s.Parser.ParseFrom},",
@@ -103,6 +103,7 @@ func (w *gCsWriter) WriteMsg(idx int, msg *Msg) {
 		w.codeToTypeHeader.WriteString(fmt.Sprintf("\n\t\t\t{%d, %s.Parser.ParseFrom},",
 			kiwi.MergeSvcCode(msg.Svc.Id, msg.Code), msg.Name))
 	}
+	return nil
 }
 
 func (w *gCsWriter) Save() error {

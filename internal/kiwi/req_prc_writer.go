@@ -34,7 +34,7 @@ func (w *reqPrcWriter) WriteHeader() {
 	w.svcBuilder.WriteString("\n\nfunc (s *svc) registerReq() {")
 }
 
-func (w *reqPrcWriter) WriteMsg(idx int, msg *Msg) {
+func (w *reqPrcWriter) WriteMsg(idx int, msg *Msg) error {
 	svcStr := "_svc"
 	svcBuilder := w.svcBuilder
 	onStr := fmt.Sprintf("%s.%s", svcStr, HandlerPrefix)
@@ -91,7 +91,7 @@ func (w *reqPrcWriter) WriteMsg(idx int, msg *Msg) {
 		}
 		svcBuilder.WriteString("\n\t})")
 	default:
-		return
+		return nil
 	}
 	if writeHead {
 		w.headBuilder.WriteString("\n\t\"github.com/15mga/kiwi/core\"")
@@ -101,6 +101,7 @@ func (w *reqPrcWriter) WriteMsg(idx int, msg *Msg) {
 		w.headBuilder.WriteString("\n\t\"github.com/15mga/kiwi/util\"")
 	}
 	w.SetDirty(true)
+	return nil
 }
 
 func (w *reqPrcWriter) WriteFooter() {

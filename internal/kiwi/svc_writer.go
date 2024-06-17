@@ -22,8 +22,9 @@ func (w *svcWriter) Reset() {
 	w.SetDirty(true)
 }
 
-func (w *svcWriter) WriteMsg(idx int, msg *Msg) {
+func (w *svcWriter) WriteMsg(idx int, msg *Msg) error {
 	w.msgSlc = append(w.msgSlc, msg)
+	return nil
 }
 
 func (w *svcWriter) hasSchema() bool {

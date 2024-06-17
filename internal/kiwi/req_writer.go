@@ -23,12 +23,13 @@ func (w *reqWriter) Reset() {
 	w.SetDirty(true)
 }
 
-func (w *reqWriter) WriteMsg(idx int, msg *Msg) {
+func (w *reqWriter) WriteMsg(idx int, msg *Msg) error {
 	if msg.Type != EMsgReq {
-		return
+		return nil
 	}
 
 	w.msgMap[HandlerPrefix+msg.Method] = msg
+	return nil
 }
 
 func (w *reqWriter) WriteHeader() {

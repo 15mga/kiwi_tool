@@ -18,9 +18,9 @@ func (w *tsWriter) Reset() {
 	w.builder = &strings.Builder{}
 }
 
-func (w *tsWriter) WriteMsg(idx int, msg *Msg) {
+func (w *tsWriter) WriteMsg(idx int, msg *Msg) error {
 	if msg.Type != EMsgReq && msg.Type != EMsgRes && msg.Type != EMsgPus {
-		return
+		return nil
 	}
 	w.SetDirty(true)
 	w.builder.WriteString(fmt.Sprintf("\n\nexport class %s }", msg.Name))
@@ -28,4 +28,5 @@ func (w *tsWriter) WriteMsg(idx int, msg *Msg) {
 	//field.
 	//}
 	w.builder.WriteString("}")
+	return nil
 }

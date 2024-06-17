@@ -32,9 +32,9 @@ func (w *gRoleWriter) Reset() {
 	w.roleBuilder = &strings.Builder{}
 }
 
-func (w *gRoleWriter) WriteMsg(idx int, msg *Msg) {
+func (w *gRoleWriter) WriteMsg(idx int, msg *Msg) error {
 	if msg.Type != EMsgReq {
-		return
+		return nil
 	}
 	roleSlc := proto.GetExtension(msg.Msg.Desc.Options(), tool.E_Role).([]string)
 	slc := make([]string, 0, len(roleSlc))
@@ -55,6 +55,7 @@ func (w *gRoleWriter) WriteMsg(idx int, msg *Msg) {
 		w.roleBuilder.WriteString(fmt.Sprintf("\n\t%d: {%s},",
 			kiwi.MergeSvcCode(msg.Svc.Id, msg.Code), strings.Join(slc, ", ")))
 	}
+	return nil
 }
 
 func (w *gRoleWriter) WriteHeader() {

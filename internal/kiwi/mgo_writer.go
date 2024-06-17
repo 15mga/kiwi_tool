@@ -134,9 +134,9 @@ func (w *mgoWriter) WriteFooter() {
 	w.initBuilder.WriteString("\n}")
 }
 
-func (w *mgoWriter) WriteMsg(idx int, msg *Msg) {
+func (w *mgoWriter) WriteMsg(idx int, msg *Msg) error {
 	if msg.Type != EMsgNil && msg.Type != EMsgSch {
-		return
+		return nil
 	}
 	w.SetDirty(true)
 	w.addFields(msg)
@@ -150,6 +150,7 @@ func (w *mgoWriter) WriteMsg(idx int, msg *Msg) {
 		w.writeSchema(msg)
 		w.writeIdx(msg)
 	}
+	return nil
 }
 
 func (w *mgoWriter) Save() error {

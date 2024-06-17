@@ -35,13 +35,13 @@ func (w *codecWriter) WriteHeader() {
 	w.facBuilder.WriteString("\n\nfunc BindCodecFac() {")
 }
 
-func (w *codecWriter) WriteMsg(idx int, msg *Msg) {
+func (w *codecWriter) WriteMsg(idx int, msg *Msg) error {
 	w.SetDirty(true)
 	if msg.Type != EMsgPus &&
 		msg.Type != EMsgReq &&
 		msg.Type != EMsgRes &&
 		msg.Type != EMsgNtc {
-		return
+		return nil
 	}
 	w.constBuilder.WriteString(fmt.Sprintf("\n%s", msg.Msg.Comments.Leading.String()))
 	w.constBuilder.WriteString(fmt.Sprintf("\t%s kiwi.TCode = %d", msg.Name, msg.Code))
@@ -51,6 +51,7 @@ func (w *codecWriter) WriteMsg(idx int, msg *Msg) {
 		svcName, msg.Name))
 	w.facBuilder.WriteString(fmt.Sprintf("\n\t\treturn &pb.%s{}", msg.Name))
 	w.facBuilder.WriteString("\n\t})")
+	return nil
 }
 
 func (w *codecWriter) WriteFooter() {

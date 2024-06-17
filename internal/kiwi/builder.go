@@ -139,7 +139,10 @@ func (b *builder) write(svcSlc []*svc) error {
 		for _, writer := range b.globalWriters {
 			writer.SetSvc(svc)
 			for i, m := range msgSlc {
-				writer.WriteMsg(i, m)
+				err := writer.WriteMsg(i, m)
+				if err != nil {
+					return err
+				}
 			}
 		}
 		for _, writer := range b.writers {
@@ -147,7 +150,10 @@ func (b *builder) write(svcSlc []*svc) error {
 			writer.SetSvc(svc)
 			writer.WriteHeader()
 			for i, m := range msgSlc {
-				writer.WriteMsg(i, m)
+				err := writer.WriteMsg(i, m)
+				if err != nil {
+					return err
+				}
 			}
 
 			if !writer.Dirty() {

@@ -13,7 +13,7 @@ type IWriter interface {
 	Dirty() bool
 	SetDirty(bool)
 	WriteHeader()
-	WriteMsg(idx int, msg *Msg)
+	WriteMsg(idx int, msg *Msg) error
 	WriteFooter()
 	SetSvc(svc *svc)
 	Svc() *svc
@@ -39,8 +39,8 @@ func (w *baseWriter) WriteHeader() {
 
 }
 
-func (w *baseWriter) WriteMsg(idx int, msg *Msg) {
-
+func (w *baseWriter) WriteMsg(idx int, msg *Msg) error {
+	return nil
 }
 
 func (w *baseWriter) WriteFooter() {

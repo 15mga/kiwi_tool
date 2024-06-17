@@ -23,10 +23,11 @@ func (w *mockWriter) Reset() {
 	w.SetDirty(true)
 }
 
-func (w *mockWriter) WriteMsg(idx int, msg *Msg) {
+func (w *mockWriter) WriteMsg(idx int, msg *Msg) error {
 	if msg.Type == EMsgReq || msg.Type == EMsgRes || msg.Type == EMsgPus {
 		w.msgSlc = append(w.msgSlc, msg)
 	}
+	return nil
 }
 
 func (w *mockWriter) Save() error {

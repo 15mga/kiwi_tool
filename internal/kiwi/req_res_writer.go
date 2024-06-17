@@ -30,18 +30,18 @@ func (w *reqResWriter) WriteHeader() {
 	w.builder.WriteString("\n\nfunc BindReqToRes() {")
 }
 
-func (w *reqResWriter) WriteMsg(idx int, msg *Msg) {
+func (w *reqResWriter) WriteMsg(idx int, msg *Msg) error {
 	if msg.Type != EMsgReq {
-		return
+		return nil
 	}
 	reqName := msg.Name
 	resName := reqToRes(reqName)
 	_, ok := w.svc.Res[resName]
 	if !ok {
-		fmt.Printf("not exist res: %s\n", resName)
-		return
+		return fmt.Errorf("not exist res: %s\n", resName)
 	}
 	w.write(reqName, resName)
+	return nil
 }
 
 func (w *reqResWriter) write(req, res string) {
