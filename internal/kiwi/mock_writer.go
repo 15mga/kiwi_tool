@@ -2,6 +2,7 @@ package kiwi
 
 import (
 	"fmt"
+	"github.com/15mga/kiwi/util"
 	"strings"
 )
 
@@ -46,6 +47,7 @@ func (w *mockWriter) Save() error {
 	w.builder.WriteString("\n\t\"github.com/15mga/kiwi/mock\"")
 	w.builder.WriteString("\n\t\"github.com/15mga/kiwi/util\"")
 	w.builder.WriteString(fmt.Sprintf("\n\t\"%s/internal/%s\"", w.Builder().module, svcName))
+	w.builder.WriteString("\n\t\"strconv\"")
 	w.builder.WriteString("\n)")
 	w.builder.WriteString("\n\ntype Svc struct {")
 	w.builder.WriteString("\n\tsvc")
@@ -64,23 +66,21 @@ func (w *mockWriter) Save() error {
 		case EMsgReq:
 			w.builder.WriteString(fmt.Sprintf("\n\ts.client.BindPointMsg(\"%s\", \"%s\", s.in%s)", msg.Svc.Name, msg.Method, msg.Name))
 			w.handleBuilder.WriteString(fmt.Sprintf("\n\nfunc (s *svc) in%s(msg graph.IMsg) *util.Err {", msg.Name))
-			w.handleBuilder.WriteString(fmt.Sprintf("\n\treq, ok := util.MGet[*pb.%s](s.client.Graph().Data(), \"%s\")", msg.Name, msg.Method))
-			w.handleBuilder.WriteString("\n\tif !ok {")
-			w.handleBuilder.WriteString(fmt.Sprintf("\n\t\treq = &pb.%s{}", msg.Name))
-			w.handleBuilder.WriteString("\n\t}")
-			w.handleBuilder.WriteString("\n\ts.client.DecorateReq(req)")
+			w.handleBuilder.WriteString(fmt.Sprintf("\n\treq := s.client.GetRequest(common.%s, %s.%s)", util.ToBigHump(msg.Svc.Name), msg.Svc.Name, msg.Name))
 			w.handleBuilder.WriteString("\n\treturn s.Req(req)")
 			w.handleBuilder.WriteString("\n}")
 		case EMsgRes:
 			w.builder.WriteString(fmt.Sprintf("\n\ts.client.BindNetMsg(&pb.%s{}, s.on%s)", msg.Name, msg.Name))
 			w.handleBuilder.WriteString(fmt.Sprintf("\n\nfunc (s *svc) on%s(msg util.IMsg) (point string, data any) {", msg.Name))
-			w.handleBuilder.WriteString(fmt.Sprintf("\n\ts.client.Graph().Data().Set(\"%s\", msg)", msg.Name))
+			w.handleBuilder.WriteString("\n\tsc := kiwi.MergeSvcCode(kiwi.Codec().MsgToSvcCode(msg))")
+			w.handleBuilder.WriteString("\n\ts.client.Graph().Data().Set(strconv.Itoa(int(sc)), msg)")
 			w.handleBuilder.WriteString(fmt.Sprintf("\n\treturn \"%s\", nil", msg.Method))
 			w.handleBuilder.WriteString("\n}")
 		case EMsgPus:
 			w.builder.WriteString(fmt.Sprintf("\n\ts.client.BindNetMsg(&pb.%s{}, s.on%s)", msg.Name, msg.Name))
 			w.handleBuilder.WriteString(fmt.Sprintf("\n\nfunc (s *svc) on%s(msg util.IMsg) (point string, data any) {", msg.Name))
-			w.handleBuilder.WriteString(fmt.Sprintf("\n\ts.client.Graph().Data().Set(\"%s\", msg)", msg.Name))
+			w.handleBuilder.WriteString("\n\tsc := kiwi.MergeSvcCode(kiwi.Codec().MsgToSvcCode(msg))")
+			w.handleBuilder.WriteString("\n\ts.client.Graph().Data().Set(strconv.Itoa(int(sc)), msg)")
 			w.handleBuilder.WriteString("\n\treturn \"\", nil")
 			w.handleBuilder.WriteString("\n}")
 		}
