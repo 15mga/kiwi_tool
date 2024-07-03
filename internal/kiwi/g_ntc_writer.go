@@ -56,7 +56,7 @@ func (w *gNtcWriter) Save() error {
 		headBuilder := &strings.Builder{}
 		headBuilder.WriteString("package " + svc)
 		watchBuilder := &strings.Builder{}
-		watchBuilder.WriteString("\n\nfunc (svc *svc) watchNtc() {")
+		watchBuilder.WriteString("\n\nfunc watchNtc() {")
 		writeImport := false
 		writeUtil := false
 		writeCommon := false
@@ -68,7 +68,7 @@ func (w *gNtcWriter) Save() error {
 				ntcBuilder.WriteString("\n\tpkt.Err2(util.EcNotImplement, util.M{\"ntc\": ntc})")
 				ntcBuilder.WriteString("\n}")
 
-				watchBuilder.WriteString(fmt.Sprintf("\n\tsvc.WatchNotice(&pb.%s{}, func(ntc kiwi.IRcvNotice) {",
+				watchBuilder.WriteString(fmt.Sprintf("\n\t_svc.WatchNotice(&pb.%s{}, func(ntc kiwi.IRcvNotice) {",
 					c))
 				switch worker.Mode {
 				case tool.EWorker_Go:

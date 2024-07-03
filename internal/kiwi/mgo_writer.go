@@ -41,7 +41,7 @@ func (w *mgoWriter) WriteHeader() {
 	w.importBuilder.WriteString("package " + w.Svc().Name)
 	w.importBuilder.WriteString("\n\nimport (")
 	w.schemaBuilder.WriteString("\n\nconst (")
-	w.initBuilder.WriteString("\n\nfunc (s *svc) initColl() {")
+	w.initBuilder.WriteString("\n\nfunc initColl() {")
 }
 
 type mgoFieldData struct {
