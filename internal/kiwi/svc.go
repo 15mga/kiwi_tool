@@ -36,7 +36,7 @@ type svc struct {
 	Msg       map[string]*Msg
 	WatchNtc  []*tool.Ntc
 	Fail      []*tool.Fail
-	Common    []string
+	Common    []string //通用服务的借口，不是具体服务
 }
 
 func (s *svc) AddFile(file *protogen.File) error {

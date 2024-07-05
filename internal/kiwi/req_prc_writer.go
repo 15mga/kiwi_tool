@@ -30,6 +30,7 @@ func (w *reqPrcWriter) WriteHeader() {
 	w.headBuilder.WriteString("\n\nimport (")
 	w.headBuilder.WriteString("\n\t\"github.com/15mga/kiwi\"")
 	w.headBuilder.WriteString(fmt.Sprintf("\n\t\"%s/internal/common\"", w.Module()))
+	w.headBuilder.WriteString(fmt.Sprintf("\n\t\"%s/internal/codec\"", w.Module()))
 
 	w.svcBuilder.WriteString("\n\nfunc registerReq() {")
 }
@@ -45,7 +46,7 @@ func (w *reqPrcWriter) WriteMsg(idx int, msg *Msg) error {
 	case EMsgReq:
 		writeHead = true
 		name := msg.Name
-		svcBuilder.WriteString(fmt.Sprintf("\n\tkiwi.Router().BindReq(common.%s, %s, func(req kiwi.IRcvRequest){",
+		svcBuilder.WriteString(fmt.Sprintf("\n\tkiwi.Router().BindReq(common.%s, codec.%s, func(req kiwi.IRcvRequest){",
 			util.ToBigHump(msg.Svc.Name), name))
 		svcBuilder.WriteString("\n\treq.SetReceiver(_svc)")
 		worker := msg.GetWorker()

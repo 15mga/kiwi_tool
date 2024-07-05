@@ -3,8 +3,6 @@ package kiwi
 import (
 	"fmt"
 	"strings"
-
-	"github.com/15mga/kiwi/util"
 )
 
 func NewCodecWriter() IWriter {
@@ -23,16 +21,11 @@ func (w *codecWriter) Reset() {
 }
 
 func (w *codecWriter) WriteHeader() {
-	w.constBuilder.WriteString(fmt.Sprintf("package %s", w.Svc().Name))
+	w.constBuilder.WriteString(fmt.Sprintf("package codec"))
 	w.constBuilder.WriteString("\n\nimport (")
-	w.constBuilder.WriteString(fmt.Sprintf("\n\t\"%s/internal/common\"", w.Module()))
-	w.constBuilder.WriteString(fmt.Sprintf("\n\t\"%s/proto/pb\"", w.Module()))
 	w.constBuilder.WriteString("\n\n\t\"github.com/15mga/kiwi\"")
-	w.constBuilder.WriteString("\n\t\"github.com/15mga/kiwi/util\"")
 	w.constBuilder.WriteString("\n)")
 	w.constBuilder.WriteString("\n\nconst (")
-
-	w.facBuilder.WriteString("\n\nfunc BindCodecFac() {")
 }
 
 func (w *codecWriter) WriteMsg(idx int, msg *Msg) error {
@@ -45,22 +38,14 @@ func (w *codecWriter) WriteMsg(idx int, msg *Msg) error {
 	}
 	w.constBuilder.WriteString(fmt.Sprintf("\n%s", msg.Msg.Comments.Leading.String()))
 	w.constBuilder.WriteString(fmt.Sprintf("\t%s kiwi.TCode = %d", msg.Name, msg.Code))
-
-	svcName := util.ToBigHump(msg.Svc.Name)
-	w.facBuilder.WriteString(fmt.Sprintf("\n\tkiwi.Codec().BindFac(common.%s, %s, func() util.IMsg {",
-		svcName, msg.Name))
-	w.facBuilder.WriteString(fmt.Sprintf("\n\t\treturn &pb.%s{}", msg.Name))
-	w.facBuilder.WriteString("\n\t})")
 	return nil
 }
 
 func (w *codecWriter) WriteFooter() {
 	w.constBuilder.WriteString("\n)")
-
-	w.facBuilder.WriteString("\n}")
 }
 
 func (w *codecWriter) Save() error {
-	path := fmt.Sprintf("/%s/codec.go", w.Svc().Name)
+	path := fmt.Sprintf("/codec/%s.go", w.Svc().Name)
 	return w.save(path, w.constBuilder.String()+w.facBuilder.String())
 }

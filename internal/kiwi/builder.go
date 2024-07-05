@@ -16,10 +16,12 @@ func newBuilder(plugin *protogen.Plugin, module, db string, playerRoles map[stri
 		msgMap:      make(map[string]*Msg),
 	}
 	b.addGlobalWriters(
+		newGCodeWriter(),
 		NewGCsWriter(),
 		newGFailCodeWriter(),
 		NewGMockWriter(),
 		NewGNtcWriter(),
+		newGReqResWriter(),
 		NewGRoleWriter(),
 		NewGSvcWriter(),
 	)
@@ -27,7 +29,6 @@ func newBuilder(plugin *protogen.Plugin, module, db string, playerRoles map[stri
 		NewMockWriter(),
 		NewCodecWriter(),
 		NewReqWriter(),
-		NewReqResWriter(),
 		NewSvcWriter(),
 		NewReqPrcWriter(),
 	)

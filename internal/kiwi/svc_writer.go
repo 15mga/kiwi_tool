@@ -65,12 +65,10 @@ func (w *svcWriter) Save() error {
 	w.svcBuilder.WriteString("\n\tcore.Service")
 	w.svcBuilder.WriteString("\n}")
 	w.svcBuilder.WriteString("\n\nfunc (s *svc) Start() {")
-	w.svcBuilder.WriteString("\n\tBindCodecFac()")
 	if w.hasSchema() {
 		w.svcBuilder.WriteString("\n\tinitColl()")
 	}
 	w.svcBuilder.WriteString("\n\tregisterReq()")
-	w.svcBuilder.WriteString("\n\tBindReqToRes()")
 	w.svcBuilder.WriteString("\n}")
 	w.svcBuilder.WriteString("\n\nfunc (s *svc) AfterStart() {")
 	if len(w.svc.WatchNtc) > 0 {
