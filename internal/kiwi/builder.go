@@ -7,7 +7,7 @@ import (
 	"sort"
 )
 
-func newBuilder(plugin *protogen.Plugin, module, db string, playerRoles map[string]struct{}) *builder {
+func newBuilder(plugin *protogen.Plugin, module, db string, playerRoles map[string]struct{}, clientMap map[string]struct{}) *builder {
 	b := &builder{
 		plugin:      plugin,
 		module:      module,
@@ -17,7 +17,6 @@ func newBuilder(plugin *protogen.Plugin, module, db string, playerRoles map[stri
 	}
 	b.addGlobalWriters(
 		newGCodeWriter(),
-		NewGCsWriter(),
 		newGFailCodeWriter(),
 		NewGMockWriter(),
 		NewGNtcWriter(),
@@ -32,6 +31,10 @@ func newBuilder(plugin *protogen.Plugin, module, db string, playerRoles map[stri
 		NewSvcWriter(),
 		NewReqPrcWriter(),
 	)
+	_, ok := clientMap["cs"]
+	if ok {
+		b.addGlobalWriters(NewGCsWriter())
+	}
 	switch db {
 	case "mgo":
 		b.addWriters(NewMgoWriter())
