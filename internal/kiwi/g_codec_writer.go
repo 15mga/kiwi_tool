@@ -30,7 +30,7 @@ func (w *gCodecWriter) Save() error {
 	contentBd := strings.Builder{}
 	contentBd.WriteString("\n\nfunc BindFac() {")
 	for _, svc := range w.Builder().svcSlc {
-		if len(svc.Common) > 0 {
+		if svc.IsCommonSvc() {
 			continue
 		}
 

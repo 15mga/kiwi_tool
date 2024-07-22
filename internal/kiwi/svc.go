@@ -39,6 +39,10 @@ type svc struct {
 	Common    []string //通用服务的借口，不是具体服务
 }
 
+func (s *svc) IsCommonSvc() bool {
+	return len(s.Common) > 0
+}
+
 func (s *svc) AddFile(file *protogen.File) error {
 	extSvc := proto.GetExtension(file.Desc.Options(), tool.E_Svc).(*tool.Svc)
 	svcId := kiwi.TSvc(extSvc.Id)

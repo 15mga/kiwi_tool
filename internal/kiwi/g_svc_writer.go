@@ -34,7 +34,7 @@ func (w *gSvcWriter) Save() error {
 	nameToSvcBuilder.WriteString("\n\nvar NameToSvc = map[string]kiwi.TSvc{")
 
 	for _, svc := range w.Builder().svcSlc {
-		if len(svc.Common) > 0 {
+		if svc.IsCommonSvc() {
 			continue
 		}
 		svcName := svc.Name

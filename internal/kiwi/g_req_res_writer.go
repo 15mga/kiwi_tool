@@ -28,7 +28,7 @@ func (w *gReqResWriter) Save() error {
 	contentBd := strings.Builder{}
 	contentBd.WriteString("\n\nfunc BindReqToRes() {")
 	for _, svc := range w.Builder().svcSlc {
-		if len(svc.Common) > 0 {
+		if svc.IsCommonSvc() {
 			continue
 		}
 
