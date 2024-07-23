@@ -42,11 +42,11 @@ func (w *mockWriter) Save() error {
 	w.builder.WriteString("\n\nimport (")
 	w.builder.WriteString(fmt.Sprintf("\n\t\"%s/proto/pb\"", w.Builder().module))
 	w.builder.WriteString(fmt.Sprintf("\n\t\"%s/internal/common\"", w.Builder().module))
+	w.builder.WriteString(fmt.Sprintf("\n\t\"%s/internal/codec\"", w.Builder().module))
 	w.builder.WriteString("\n\t\"github.com/15mga/kiwi\"")
 	w.builder.WriteString("\n\t\"github.com/15mga/kiwi/graph\"")
 	w.builder.WriteString("\n\t\"github.com/15mga/kiwi/mock\"")
 	w.builder.WriteString("\n\t\"github.com/15mga/kiwi/util\"")
-	w.builder.WriteString(fmt.Sprintf("\n\t\"%s/internal/%s\"", w.Builder().module, svcName))
 	w.builder.WriteString("\n\t\"strconv\"")
 	w.builder.WriteString("\n)")
 	w.builder.WriteString("\n\ntype Svc struct {")
@@ -62,7 +62,7 @@ func (w *mockWriter) Save() error {
 		case EMsgReq:
 			w.builder.WriteString(fmt.Sprintf("\n\ts.client.BindPointMsg(\"%s\", \"%s\", s.in%s)", msg.Svc.Name, msg.Method, msg.Name))
 			w.handleBuilder.WriteString(fmt.Sprintf("\n\nfunc (s *svc) in%s(msg graph.IMsg) *util.Err {", msg.Name))
-			w.handleBuilder.WriteString(fmt.Sprintf("\n\treq := s.client.GetRequest(common.%s, %s.%s)", util.ToBigHump(msg.Svc.Name), msg.Svc.Name, msg.Name))
+			w.handleBuilder.WriteString(fmt.Sprintf("\n\treq := s.client.GetRequest(common.%s, codec.%s)", util.ToBigHump(msg.Svc.Name), msg.Name))
 			w.handleBuilder.WriteString("\n\treturn s.Req(req)")
 			w.handleBuilder.WriteString("\n}")
 		case EMsgRes:
