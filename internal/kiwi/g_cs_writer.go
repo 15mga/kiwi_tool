@@ -82,7 +82,7 @@ func (w *gCsWriter) WriteMsg(idx int, msg *Msg) error {
 	case EMsgRes:
 		resName := msg.Name
 		reqName := resToReq(resName)
-		reqMsg, ok := w.Builder().msgMap[reqName]
+		reqMsg, ok := w.svc.Req[reqName]
 		if !ok || !w.isPlayerMsg(reqMsg) {
 			return nil
 		}
