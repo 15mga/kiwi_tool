@@ -13,7 +13,6 @@ func newBuilder(plugin *protogen.Plugin, module, db string, playerRoles map[stri
 		module:      module,
 		playerRoles: playerRoles,
 		svcMap:      make(map[string]*svc),
-		msgMap:      make(map[string]*Msg),
 	}
 	b.addGlobalWriters(
 		newGCodeWriter(),
@@ -30,6 +29,7 @@ func newBuilder(plugin *protogen.Plugin, module, db string, playerRoles map[stri
 		NewReqWriter(),
 		NewSvcWriter(),
 		NewReqPrcWriter(),
+		NewModelWriter(),
 	)
 	_, ok := clientMap["cs"]
 	if ok {
@@ -50,7 +50,6 @@ type builder struct {
 	playerRoles   map[string]struct{}
 	svcMap        map[string]*svc
 	svcSlc        []*svc
-	msgMap        map[string]*Msg
 	commonSvcSlc  []*svc
 }
 

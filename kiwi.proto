@@ -57,6 +57,7 @@ extend google.protobuf.MessageOptions {
   bool schema = 151102;
   repeated Idx idx =  151103;
   Worker worker = 151104;
+  bool cache = 151105;
 }
 
 message Fail {
