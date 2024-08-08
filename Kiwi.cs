@@ -48,11 +48,12 @@ namespace Kiwi {
             "cm90b2J1Zi5NZXNzYWdlT3B0aW9ucxi+nAkgASgIOjkKA2lkeBIfLmdvb2ds",
             "ZS5wcm90b2J1Zi5NZXNzYWdlT3B0aW9ucxi/nAkgAygLMgkua2l3aS5JZHg6",
             "PwoGd29ya2VyEh8uZ29vZ2xlLnByb3RvYnVmLk1lc3NhZ2VPcHRpb25zGMCc",
-            "CSABKAsyDC5raXdpLldvcmtlckIcWhpnaXRodWIuY29tLzE1bWdhL2tpd2lf",
-            "dG9vbGIGcHJvdG8z"));
+            "CSABKAsyDC5raXdpLldvcmtlcjowCgVjYWNoZRIfLmdvb2dsZS5wcm90b2J1",
+            "Zi5NZXNzYWdlT3B0aW9ucxjBnAkgASgIQhxaGmdpdGh1Yi5jb20vMTVtZ2Ev",
+            "a2l3aV90b29sYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.Reflection.DescriptorReflection.Descriptor, },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Kiwi.EOrigin), typeof(global::Kiwi.EWorker), typeof(global::Kiwi.EIdx), }, new pb::Extension[] { KiwiExtensions.Svc, KiwiExtensions.Code, KiwiExtensions.Role, KiwiExtensions.Schema, KiwiExtensions.Idx, KiwiExtensions.Worker }, new pbr::GeneratedClrTypeInfo[] {
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Kiwi.EOrigin), typeof(global::Kiwi.EWorker), typeof(global::Kiwi.EIdx), }, new pb::Extension[] { KiwiExtensions.Svc, KiwiExtensions.Code, KiwiExtensions.Role, KiwiExtensions.Schema, KiwiExtensions.Idx, KiwiExtensions.Worker, KiwiExtensions.Cache }, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Kiwi.Ntc), global::Kiwi.Ntc.Parser, new[]{ "Svc", "Items" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Kiwi.NtcItem), global::Kiwi.NtcItem.Parser, new[]{ "Code", "Mode", "Origin", "Key" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Kiwi.Svc), global::Kiwi.Svc.Parser, new[]{ "Id", "Name", "Worker", "Ntc", "Fail", "Common" }, null, null, null, null),
@@ -79,6 +80,8 @@ namespace Kiwi {
       new pb::RepeatedExtension<global::Google.Protobuf.Reflection.MessageOptions, global::Kiwi.Idx>(151103, pb::FieldCodec.ForMessage(1208826, global::Kiwi.Idx.Parser));
     public static readonly pb::Extension<global::Google.Protobuf.Reflection.MessageOptions, global::Kiwi.Worker> Worker =
       new pb::Extension<global::Google.Protobuf.Reflection.MessageOptions, global::Kiwi.Worker>(151104, pb::FieldCodec.ForMessage(1208834, global::Kiwi.Worker.Parser));
+    public static readonly pb::Extension<global::Google.Protobuf.Reflection.MessageOptions, bool> Cache =
+      new pb::Extension<global::Google.Protobuf.Reflection.MessageOptions, bool>(151105, pb::FieldCodec.ForBool(1208840, false));
   }
 
   #region Enums

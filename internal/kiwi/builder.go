@@ -29,6 +29,7 @@ func newBuilder(plugin *protogen.Plugin, module, db string, playerRoles map[stri
 		NewReqWriter(),
 		NewSvcWriter(),
 		NewReqPrcWriter(),
+		NewModelWriter(),
 	)
 	_, ok := clientMap["cs"]
 	if ok {
