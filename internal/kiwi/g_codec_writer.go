@@ -23,12 +23,11 @@ func (w *gCodecWriter) Save() error {
 	headBd.WriteString("package codec")
 	headBd.WriteString("\n\nimport (")
 	headBd.WriteString("\n\t\"github.com/15mga/kiwi\"")
-	headBd.WriteString("\n\t\"github.com/15mga/kiwi/util\"")
 	headBd.WriteString(fmt.Sprintf("\n\t\"%s/internal/common\"", w.Module()))
 	headBd.WriteString(fmt.Sprintf("\n\t\"%s/proto/pb\"", w.Module()))
 
 	contentBd := strings.Builder{}
-	contentBd.WriteString("\n\nfunc BindFac() {")
+	contentBd.WriteString("\n\nfunc BindPool() {")
 	for _, svc := range w.Builder().svcSlc {
 		if svc.IsCommonSvc() {
 			continue
@@ -42,7 +41,7 @@ func (w *gCodecWriter) Save() error {
 				msg.Type != EMsgNtc {
 				continue
 			}
-			contentBd.WriteString(fmt.Sprintf("\n\tkiwi.Codec().BindFac(common.%s, %s, func() util.IMsg {",
+			contentBd.WriteString(fmt.Sprintf("\n\tkiwi.Codec().BindPool(common.%s, %s, func() any {",
 				svcName, msg.Name))
 			contentBd.WriteString(fmt.Sprintf("\n\t\treturn &pb.%s{}", msg.Name))
 			contentBd.WriteString("\n\t})")

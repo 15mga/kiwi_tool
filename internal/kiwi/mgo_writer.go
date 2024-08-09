@@ -189,6 +189,9 @@ func (w *mgoWriter) writeIdx(msg *Msg) {
 
 	slc := proto.GetExtension(msg.Msg.Desc.Options(), tool.E_Idx).([]*tool.Idx)
 	for _, idx := range slc {
+		if len(idx.Fields) == 0 {
+			continue
+		}
 		if !w.importBson {
 			w.importBson = true
 			w.importBuilder.WriteString("\n\"go.mongodb.org/mongo-driver/bson\"")
