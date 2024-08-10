@@ -137,7 +137,7 @@ func (b *builder) write(svcSlc []*svc) error {
 			continue
 		}
 		sort.Slice(msgSlc, func(i, j int) bool {
-			return msgSlc[i].Code < msgSlc[j].Code
+			return msgSlc[i].MethodCode < msgSlc[j].MethodCode
 		})
 		for _, writer := range b.globalWriters {
 			writer.SetSvc(svc)

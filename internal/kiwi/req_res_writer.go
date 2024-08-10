@@ -34,7 +34,7 @@ func (w *reqResWriter) WriteMsg(idx int, msg *Msg) error {
 	if msg.Type != EMsgReq {
 		return nil
 	}
-	reqName := msg.Name
+	reqName := msg.MsgName
 	resName := reqToRes(reqName)
 	_, ok := w.svc.Res[resName]
 	if !ok {

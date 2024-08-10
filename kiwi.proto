@@ -52,12 +52,15 @@ enum EWorker {
 }
 
 extend google.protobuf.MessageOptions {
-  int32 code = 151100;
+  int32 method = 151100;
   repeated string role = 151101;
   bool schema = 151102;
   repeated Idx idx =  151103;
   Worker worker = 151104;
-  bool cache = 151105;
+}
+
+extend google.protobuf.FieldOptions {
+  bool cache = 151200;
 }
 
 message Fail {

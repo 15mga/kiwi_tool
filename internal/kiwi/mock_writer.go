@@ -60,21 +60,21 @@ func (w *mockWriter) Save() error {
 	for _, msg := range w.msgSlc {
 		switch msg.Type {
 		case EMsgReq:
-			w.builder.WriteString(fmt.Sprintf("\n\ts.client.BindPointMsg(\"%s\", \"%s\", s.in%s)", msg.Svc.Name, msg.Method, msg.Name))
-			w.handleBuilder.WriteString(fmt.Sprintf("\n\nfunc (s *svc) in%s(msg graph.IMsg) *util.Err {", msg.Name))
-			w.handleBuilder.WriteString(fmt.Sprintf("\n\treq := s.client.GetRequest(common.%s, codec.%s)", util.ToBigHump(msg.Svc.Name), msg.Name))
+			w.builder.WriteString(fmt.Sprintf("\n\ts.client.BindPointMsg(\"%s\", \"%s\", s.in%s)", msg.Svc.Name, msg.MethodName, msg.MsgName))
+			w.handleBuilder.WriteString(fmt.Sprintf("\n\nfunc (s *svc) in%s(msg graph.IMsg) *util.Err {", msg.MsgName))
+			w.handleBuilder.WriteString(fmt.Sprintf("\n\treq := s.client.GetRequest(common.%s, codec.%s)", util.ToBigHump(msg.Svc.Name), msg.MsgName))
 			w.handleBuilder.WriteString("\n\treturn s.Req(req)")
 			w.handleBuilder.WriteString("\n}")
 		case EMsgRes:
-			w.builder.WriteString(fmt.Sprintf("\n\ts.client.BindNetMsg(&pb.%s{}, s.on%s)", msg.Name, msg.Name))
-			w.handleBuilder.WriteString(fmt.Sprintf("\n\nfunc (s *svc) on%s(msg util.IMsg) (point string, data any) {", msg.Name))
+			w.builder.WriteString(fmt.Sprintf("\n\ts.client.BindNetMsg(&pb.%s{}, s.on%s)", msg.MsgName, msg.MsgName))
+			w.handleBuilder.WriteString(fmt.Sprintf("\n\nfunc (s *svc) on%s(msg util.IMsg) (point string, data any) {", msg.MsgName))
 			w.handleBuilder.WriteString("\n\tsc := kiwi.MergeSvcCode(kiwi.Codec().MsgToSvcCode(msg))")
 			w.handleBuilder.WriteString("\n\ts.client.Graph().Data().Set(strconv.Itoa(int(sc)), msg)")
-			w.handleBuilder.WriteString(fmt.Sprintf("\n\treturn \"%s\", nil", msg.Method))
+			w.handleBuilder.WriteString(fmt.Sprintf("\n\treturn \"%s\", nil", msg.MethodName))
 			w.handleBuilder.WriteString("\n}")
 		case EMsgPus:
-			w.builder.WriteString(fmt.Sprintf("\n\ts.client.BindNetMsg(&pb.%s{}, s.on%s)", msg.Name, msg.Name))
-			w.handleBuilder.WriteString(fmt.Sprintf("\n\nfunc (s *svc) on%s(msg util.IMsg) (point string, data any) {", msg.Name))
+			w.builder.WriteString(fmt.Sprintf("\n\ts.client.BindNetMsg(&pb.%s{}, s.on%s)", msg.MsgName, msg.MsgName))
+			w.handleBuilder.WriteString(fmt.Sprintf("\n\nfunc (s *svc) on%s(msg util.IMsg) (point string, data any) {", msg.MsgName))
 			w.handleBuilder.WriteString("\n\tsc := kiwi.MergeSvcCode(kiwi.Codec().MsgToSvcCode(msg))")
 			w.handleBuilder.WriteString("\n\ts.client.Graph().Data().Set(strconv.Itoa(int(sc)), msg)")
 			w.handleBuilder.WriteString("\n\treturn \"\", nil")

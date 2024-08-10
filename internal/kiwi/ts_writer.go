@@ -23,7 +23,7 @@ func (w *tsWriter) WriteMsg(idx int, msg *Msg) error {
 		return nil
 	}
 	w.SetDirty(true)
-	w.builder.WriteString(fmt.Sprintf("\n\nexport class %s }", msg.Name))
+	w.builder.WriteString(fmt.Sprintf("\n\nexport class %s }", msg.MsgName))
 	//for _, field := range msg.Msg.Fields {
 	//field.
 	//}

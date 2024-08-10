@@ -36,7 +36,7 @@ func (w *gReqResWriter) Save() error {
 			if msg.Type != EMsgReq {
 				continue
 			}
-			reqName := msg.Name
+			reqName := msg.MsgName
 			resName := reqToRes(reqName)
 			_, ok := svc.Res[resName]
 			if !ok {

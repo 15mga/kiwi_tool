@@ -89,29 +89,29 @@ func (s *svc) AddFile(file *protogen.File) error {
 
 func (s *svc) AddMsg(msg *Msg) error {
 	if msg.Type != EMsgNil && msg.Type != EMsgSch {
-		msg1, ok := s.CodeToMsg[msg.Code]
+		msg1, ok := s.CodeToMsg[msg.MethodCode]
 		if ok {
 			return errors.New(fmt.Sprintf("%s and %s had same code %d",
-				msg1.Name, msg.Name, msg.Code))
+				msg1.MsgName, msg.MsgName, msg.MethodCode))
 		}
-		s.CodeToMsg[msg.Code] = msg
+		s.CodeToMsg[msg.MethodCode] = msg
 	}
 	s.MsgSlc = append(s.MsgSlc, msg)
 	msg.Svc = s
 
 	switch msg.Type {
 	case EMsgNil:
-		s.Msg[msg.Name] = msg
+		s.Msg[msg.MsgName] = msg
 	case EMsgPus:
-		s.Pus[msg.Name] = msg
+		s.Pus[msg.MsgName] = msg
 	case EMsgReq:
-		s.Req[msg.Name] = msg
+		s.Req[msg.MsgName] = msg
 	case EMsgRes:
-		s.Res[msg.Name] = msg
+		s.Res[msg.MsgName] = msg
 	case EMsgNtc:
-		s.Res[msg.Name] = msg
+		s.Res[msg.MsgName] = msg
 	case EMsgSch:
-		s.Sch[msg.Name] = msg
+		s.Sch[msg.MsgName] = msg
 	}
 	return nil
 }

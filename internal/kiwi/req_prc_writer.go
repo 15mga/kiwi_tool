@@ -45,7 +45,7 @@ func (w *reqPrcWriter) WriteMsg(idx int, msg *Msg) error {
 	switch msg.Type {
 	case EMsgReq:
 		writeHead = true
-		name := msg.Name
+		name := msg.MsgName
 		svcBuilder.WriteString(fmt.Sprintf("\n\tkiwi.Router().BindReq(common.%s, codec.%s, func(req kiwi.IRcvRequest){",
 			util.ToBigHump(msg.Svc.Name), name))
 		svcBuilder.WriteString("\n\treq.SetReceiver(_svc)")
@@ -53,21 +53,21 @@ func (w *reqPrcWriter) WriteMsg(idx int, msg *Msg) error {
 		switch worker.Mode {
 		case tool.EWorker_Go:
 			svcBuilder.WriteString(fmt.Sprintf("\n\t\tcore.GoPrcReq[*pb.%s](req, %s%s)",
-				name, onStr, msg.Method))
+				name, onStr, msg.MethodName))
 		case tool.EWorker_Active:
 			switch worker.Origin {
 			case tool.EOrigin_Head:
 				writeUtil = true
 				svcBuilder.WriteString(fmt.Sprintf("\n\t\tkey, _ := util.MGet[string](req.Head(), \"%s\")", worker.Key))
 				svcBuilder.WriteString(fmt.Sprintf("\n\t\tcore.ActivePrcReq[*pb.%s](req, key, %s%s)",
-					name, onStr, msg.Method))
+					name, onStr, msg.MethodName))
 			case tool.EOrigin_Pkt:
 				svcBuilder.WriteString(fmt.Sprintf("\n\t\tkey := req.Msg().(*pb.%s).%s", name, util.ToBigHump(worker.Key)))
 				svcBuilder.WriteString(fmt.Sprintf("\n\t\tcore.ActivePrcReq[*pb.%s](req, key, %s%s)",
-					name, onStr, msg.Method))
+					name, onStr, msg.MethodName))
 			case tool.EOrigin_Service:
 				svcBuilder.WriteString(fmt.Sprintf("\n\t\tcore.ActivePrcReq[*pb.%s](req, common.S%s, %s%s)",
-					name, bigSvcName, onStr, msg.Method))
+					name, bigSvcName, onStr, msg.MethodName))
 			}
 		case tool.EWorker_Share:
 			switch worker.Origin {
@@ -75,21 +75,21 @@ func (w *reqPrcWriter) WriteMsg(idx int, msg *Msg) error {
 				writeUtil = true
 				svcBuilder.WriteString(fmt.Sprintf("\n\t\tkey, _ := util.MGet[string](req.Head(), \"%s\")", worker.Key))
 				svcBuilder.WriteString(fmt.Sprintf("\n\t\tcore.SharePrcReq[*pb.%s](req,  key, %s%s)",
-					name, onStr, msg.Method))
+					name, onStr, msg.MethodName))
 			case tool.EOrigin_Pkt:
 				svcBuilder.WriteString(fmt.Sprintf("\n\t\tkey := req.Msg().(*pb.%s).%s", name, util.ToBigHump(worker.Key)))
 				svcBuilder.WriteString(fmt.Sprintf("\n\t\tcore.SharePrcReq[*pb.%s](req,  key, %s%s)",
-					name, onStr, msg.Method))
+					name, onStr, msg.MethodName))
 			case tool.EOrigin_Service:
 				svcBuilder.WriteString(fmt.Sprintf("\n\t\tcore.SharePrcReq[*pb.%s](req, common.S%s, %s%s)",
-					name, bigSvcName, onStr, msg.Method))
+					name, bigSvcName, onStr, msg.MethodName))
 			}
 		case tool.EWorker_Global:
 			svcBuilder.WriteString(fmt.Sprintf("\n\t\tcore.GlobalPrcReq[*pb.%s](req, %s%s)",
-				name, onStr, msg.Method))
+				name, onStr, msg.MethodName))
 		case tool.EWorker_Self:
 			svcBuilder.WriteString(fmt.Sprintf("\n\t\tcore.SelfPrcReq[*pb.%s](req, %s%s)",
-				name, onStr, msg.Method))
+				name, onStr, msg.MethodName))
 		}
 		svcBuilder.WriteString("\n\t})")
 	default:

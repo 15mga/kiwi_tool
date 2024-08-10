@@ -42,8 +42,8 @@ func (w *gCodecWriter) Save() error {
 				continue
 			}
 			contentBd.WriteString(fmt.Sprintf("\n\tkiwi.Codec().BindPool(common.%s, %s, func() any {",
-				svcName, msg.Name))
-			contentBd.WriteString(fmt.Sprintf("\n\t\treturn &pb.%s{}", msg.Name))
+				svcName, msg.MsgName))
+			contentBd.WriteString(fmt.Sprintf("\n\t\treturn &pb.%s{}", msg.MsgName))
 			contentBd.WriteString("\n\t})")
 		}
 	}

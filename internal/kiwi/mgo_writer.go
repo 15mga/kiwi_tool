@@ -59,11 +59,11 @@ func (w *mgoWriter) WriteFooter() {
 		})
 	}
 	sort.Slice(fieldDataSlc, func(i, j int) bool {
-		return fieldDataSlc[i].msg.Name < fieldDataSlc[j].msg.Name
+		return fieldDataSlc[i].msg.MsgName < fieldDataSlc[j].msg.MsgName
 	})
 	for _, f := range fieldDataSlc {
 		msg, fields := f.msg, f.fields
-		msgName := msg.Name
+		msgName := msg.MsgName
 		if msg.Type == EMsgSch {
 			sort.Slice(fields, func(i, j int) bool {
 				if fields[i].GoName == "Id" {

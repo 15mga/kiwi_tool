@@ -28,7 +28,7 @@ func (w *reqWriter) WriteMsg(idx int, msg *Msg) error {
 		return nil
 	}
 
-	w.msgMap[HandlerPrefix+msg.Method] = msg
+	w.msgMap[HandlerPrefix+msg.MethodName] = msg
 	return nil
 }
 
@@ -53,12 +53,12 @@ func (w *reqWriter) Save() error {
 
 	svcName := w.svc.Name
 	sort.Slice(w.msgSlc, func(i, j int) bool {
-		return w.msgSlc[i].Code < w.msgSlc[j].Code
+		return w.msgSlc[i].MethodCode < w.msgSlc[j].MethodCode
 	})
 	for _, msg := range w.msgSlc {
 		w.builder.WriteString("\n")
-		msgName := msg.Name
-		shortName := msg.Method
+		msgName := msg.MsgName
+		shortName := msg.MethodName
 		methodName := fmt.Sprintf("%s%s", HandlerPrefix, shortName)
 		w.builder.WriteString(fmt.Sprintf("\nfunc (s *svc) %s(pkt kiwi.IRcvRequest, req *pb.%s, res *pb.%s) {",
 			methodName, msgName, reqToRes(msgName)))

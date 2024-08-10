@@ -53,7 +53,7 @@ func (w *gRoleWriter) WriteMsg(idx int, msg *Msg) error {
 	}
 	if len(slc) > 0 {
 		w.roleBuilder.WriteString(fmt.Sprintf("\n\t%d: {%s},",
-			kiwi.MergeSvcCode(msg.Svc.Id, msg.Code), strings.Join(slc, ", ")))
+			kiwi.MergeSvcCode(msg.Svc.Id, msg.MethodCode), strings.Join(slc, ", ")))
 	}
 	return nil
 }

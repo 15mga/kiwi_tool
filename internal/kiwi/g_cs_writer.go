@@ -76,32 +76,32 @@ func (w *gCsWriter) WriteMsg(idx int, msg *Msg) error {
 		if !w.isPlayerMsg(msg) {
 			return nil
 		}
-		reqCode := kiwi.MergeSvcCode(msg.Svc.Id, msg.Code)
+		reqCode := kiwi.MergeSvcCode(msg.Svc.Id, msg.MethodCode)
 		w.typeToCodeHeader.WriteString(fmt.Sprintf("\n\t\t\t{typeof(%s), %d},",
-			msg.Name, reqCode))
+			msg.MsgName, reqCode))
 	case EMsgRes:
-		resName := msg.Name
+		resName := msg.MsgName
 		reqName := resToReq(resName)
 		reqMsg, ok := w.svc.Req[reqName]
 		if !ok || !w.isPlayerMsg(reqMsg) {
 			return nil
 		}
-		resCode := kiwi.MergeSvcCode(msg.Svc.Id, msg.Code)
+		resCode := kiwi.MergeSvcCode(msg.Svc.Id, msg.MethodCode)
 		w.codeToTypeHeader.WriteString(fmt.Sprintf("\n\t\t\t{%d, %s.Parser.ParseFrom},",
-			resCode, msg.Name))
+			resCode, msg.MsgName))
 		_, ok = w.svc.Req[reqName]
 		if ok {
 			req := w.svc.Req[reqName]
-			reqCode := kiwi.MergeSvcCode(req.Svc.Id, req.Code)
+			reqCode := kiwi.MergeSvcCode(req.Svc.Id, req.MethodCode)
 			w.reqResHeader.WriteString(fmt.Sprintf("\n\t\t\t{%d, %d},",
 				reqCode, resCode))
 		}
 	case EMsgPus:
-		ntcCode := kiwi.MergeSvcCode(msg.Svc.Id, msg.Code)
+		ntcCode := kiwi.MergeSvcCode(msg.Svc.Id, msg.MethodCode)
 		w.typeToCodeHeader.WriteString(fmt.Sprintf("\n\t\t\t{typeof(%s), %d},",
-			msg.Name, ntcCode))
+			msg.MsgName, ntcCode))
 		w.codeToTypeHeader.WriteString(fmt.Sprintf("\n\t\t\t{%d, %s.Parser.ParseFrom},",
-			kiwi.MergeSvcCode(msg.Svc.Id, msg.Code), msg.Name))
+			kiwi.MergeSvcCode(msg.Svc.Id, msg.MethodCode), msg.MsgName))
 	}
 	return nil
 }

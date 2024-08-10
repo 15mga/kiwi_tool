@@ -22,20 +22,20 @@ const (
 )
 
 type Msg struct {
-	Type   EMsg
-	Name   string
-	Method string
-	Code   kiwi.TCode
-	Svc    *svc
-	Msg    *protogen.Message
-	Worker *tool.Worker
+	Type       EMsg
+	MsgName    string
+	MethodName string
+	MethodCode kiwi.TCode
+	Svc        *svc
+	Msg        *protogen.Message
+	Worker     *tool.Worker
 }
 
 func (m *Msg) Copy(msg *Msg) {
 	msg.Type = m.Type
-	msg.Name = m.Name
-	msg.Method = m.Method
-	msg.Code = m.Code
+	msg.MsgName = m.MsgName
+	msg.MethodName = m.MethodName
+	msg.MethodCode = m.MethodCode
 	msg.Msg = m.Msg
 	msg.Worker = m.Worker
 }
@@ -73,12 +73,12 @@ func getEMsg(msg *protogen.Message) EMsg {
 func NewMsg(typ EMsg, msg *protogen.Message) *Msg {
 	msgFullName := msg.GoIdent.GoName
 	return &Msg{
-		Type:   typ,
-		Name:   msgFullName,
-		Method: msgFullName[:len(msgFullName)-3],
-		Code:   kiwi.TCode(proto.GetExtension(msg.Desc.Options(), tool.E_Code).(int32)),
-		Msg:    msg,
-		Worker: proto.GetExtension(msg.Desc.Options(), tool.E_Worker).(*tool.Worker),
+		Type:       typ,
+		MsgName:    msgFullName,
+		MethodName: msgFullName[:len(msgFullName)-3],
+		MethodCode: kiwi.TCode(proto.GetExtension(msg.Desc.Options(), tool.E_Method).(int32)),
+		Msg:        msg,
+		Worker:     proto.GetExtension(msg.Desc.Options(), tool.E_Worker).(*tool.Worker),
 	}
 }
 
