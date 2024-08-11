@@ -23,6 +23,7 @@ func (w *gCodecWriter) Save() error {
 	headBd.WriteString("package codec")
 	headBd.WriteString("\n\nimport (")
 	headBd.WriteString("\n\t\"github.com/15mga/kiwi\"")
+	headBd.WriteString("\n\t\"github.com/15mga/kiwi/util\"")
 	headBd.WriteString(fmt.Sprintf("\n\t\"%s/internal/common\"", w.Module()))
 	headBd.WriteString(fmt.Sprintf("\n\t\"%s/proto/pb\"", w.Module()))
 
@@ -41,7 +42,7 @@ func (w *gCodecWriter) Save() error {
 				msg.Type != EMsgNtc {
 				continue
 			}
-			contentBd.WriteString(fmt.Sprintf("\n\tkiwi.Codec().BindPool(common.%s, %s, func() any {",
+			contentBd.WriteString(fmt.Sprintf("\n\tkiwi.Codec().BindPool(common.%s, %s, func() util.IMsg {",
 				svcName, msg.MsgName))
 			contentBd.WriteString(fmt.Sprintf("\n\t\treturn &pb.%s{}", msg.MsgName))
 			contentBd.WriteString("\n\t})")
