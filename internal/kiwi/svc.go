@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/15mga/kiwi"
+	"github.com/15mga/kiwi/util"
 	tool "github.com/15mga/kiwi_tool"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
@@ -12,7 +13,7 @@ import (
 func newSvc(name string) *svc {
 	return &svc{
 		Name:      name,
-		CodeToMsg: make(map[kiwi.TCode]*Msg),
+		CodeToMsg: make(map[kiwi.TMethod]*Msg),
 		Pus:       make(map[string]*Msg),
 		Req:       make(map[string]*Msg),
 		Res:       make(map[string]*Msg),
@@ -23,20 +24,38 @@ func newSvc(name string) *svc {
 }
 
 type svc struct {
-	Id        kiwi.TSvc
-	Name      string
-	Worker    *tool.Worker
-	CodeToMsg map[kiwi.TCode]*Msg
-	MsgSlc    []*Msg
-	Pus       map[string]*Msg
-	Req       map[string]*Msg
-	Res       map[string]*Msg
-	Ntc       map[string]*Msg
-	Sch       map[string]*Msg
-	Msg       map[string]*Msg
-	WatchNtc  []*tool.Ntc
-	Fail      []*tool.Fail
-	Common    []string //通用服务的借口，不是具体服务
+	Id           kiwi.TSvc
+	Name         string
+	Worker       *tool.Worker
+	CodeToMsg    map[kiwi.TMethod]*Msg
+	MsgSlc       []*Msg
+	Pus          map[string]*Msg
+	Req          map[string]*Msg
+	Res          map[string]*Msg
+	Ntc          map[string]*Msg
+	Sch          map[string]*Msg
+	Msg          map[string]*Msg
+	WatchNtc     []*tool.Ntc
+	Fail         []*tool.Fail
+	Dependencies []string
+	Common       []string //通用服务的借口，不是具体服务
+}
+
+func (s *svc) hasRecycleDependencies(svcMap map[string]*svc, name string, p ...string) (bool, string) {
+	for _, dep := range s.Dependencies {
+		if dep == name {
+			return true, util.StringsJoin("->", append(p, s.Name, name)...)
+		}
+		ds, ok := svcMap[dep]
+		if !ok {
+			continue
+		}
+		exist, path := ds.hasRecycleDependencies(svcMap, name, append(p, s.Name)...)
+		if exist {
+			return true, path
+		}
+	}
+	return false, ""
 }
 
 func (s *svc) IsCommonSvc() bool {
@@ -75,6 +94,7 @@ func (s *svc) AddFile(file *protogen.File) error {
 	}
 	s.WatchNtc = append(s.WatchNtc, extSvc.Ntc...)
 	s.Fail = append(s.Fail, extSvc.Fail...)
+	s.Dependencies = append(s.Dependencies, extSvc.Dependencies...)
 
 	for _, m := range file.Messages {
 		t := getEMsg(m)

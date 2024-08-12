@@ -105,6 +105,12 @@ func (b *builder) build() error {
 			}
 		}
 	}
+	for name, s := range b.svcMap {
+		exist, p := s.hasRecycleDependencies(b.svcMap, name)
+		if exist {
+			panic("recycle dependencies " + p)
+		}
+	}
 	return b.write(svcSlc)
 }
 

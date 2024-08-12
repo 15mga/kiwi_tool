@@ -29,6 +29,7 @@ message Svc {
   repeated Ntc ntc = 4; //监听的通知
   repeated Fail fail = 5; //错误码
   repeated string common = 6; //通用服务
+  repeated string dependencies = 7; //依赖服务
 }
 
 message Worker {
@@ -45,8 +46,10 @@ enum EOrigin {
 
 enum EWorker {
   Go = 0;
-  Active = 1; //需要key
-  Share = 2; //需要key
+  //Pkt/Head使用key,Service
+  Active = 1;
+  //Pkt/Head使用key,Service
+  Share = 2;
   Global = 3;
   Self = 4;
 }

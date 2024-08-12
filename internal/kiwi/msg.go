@@ -25,7 +25,7 @@ type Msg struct {
 	Type       EMsg
 	MsgName    string
 	MethodName string
-	MethodCode kiwi.TCode
+	MethodCode kiwi.TMethod
 	Svc        *svc
 	Msg        *protogen.Message
 	Worker     *tool.Worker
@@ -76,7 +76,7 @@ func NewMsg(typ EMsg, msg *protogen.Message) *Msg {
 		Type:       typ,
 		MsgName:    msgFullName,
 		MethodName: msgFullName[:len(msgFullName)-3],
-		MethodCode: kiwi.TCode(proto.GetExtension(msg.Desc.Options(), tool.E_Method).(int32)),
+		MethodCode: kiwi.TMethod(proto.GetExtension(msg.Desc.Options(), tool.E_Method).(int32)),
 		Msg:        msg,
 		Worker:     proto.GetExtension(msg.Desc.Options(), tool.E_Worker).(*tool.Worker),
 	}

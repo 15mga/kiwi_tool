@@ -23,6 +23,7 @@ type mgoWriter struct {
 	idxBuilder    *strings.Builder
 	importBson    bool
 	importMgo     bool
+	importOptions bool
 	fields        map[*Msg][]*protogen.Field
 }
 
@@ -35,6 +36,7 @@ func (w *mgoWriter) Reset() {
 	w.fields = make(map[*Msg][]*protogen.Field)
 	w.importBson = false
 	w.importMgo = false
+	w.importOptions = false
 }
 
 func (w *mgoWriter) WriteHeader() {
@@ -142,11 +144,7 @@ func (w *mgoWriter) WriteMsg(idx int, msg *Msg) error {
 	w.addFields(msg)
 	ok := isSchema(msg.Msg)
 	if ok {
-		if !w.importMgo {
-			w.importMgo = true
-			w.importBuilder.WriteString("\n\"github.com/15mga/kiwi/util/mgo\"")
-			w.importBuilder.WriteString("\n\"go.mongodb.org/mongo-driver/mongo\"")
-		}
+		w.writeImportMgo()
 		w.writeSchema(msg)
 		w.writeIdx(msg)
 	}
@@ -187,15 +185,31 @@ func (w *mgoWriter) writeIdx(msg *Msg) {
 	w.idxBuilder.WriteString(fmt.Sprintf("\n\nfunc %sIdx() []mongo.IndexModel {", msgName))
 	w.idxBuilder.WriteString("\n\treturn []mongo.IndexModel{")
 
-	slc := proto.GetExtension(msg.Msg.Desc.Options(), tool.E_Idx).([]*tool.Idx)
-	for _, idx := range slc {
+	for _, field := range msg.Msg.Fields {
+		if field.GoName == "Id" {
+			continue
+		}
+		cache := proto.GetExtension(field.Desc.Options(), tool.E_Cache).(bool)
+		if !cache {
+			continue
+		}
+		w.writeImportBson()
+		w.writeImportOptions()
+
+		w.idxBuilder.WriteString("\n\t\t{")
+		w.idxBuilder.WriteString("\n\t\t\tKeys: bson.D{")
+		w.idxBuilder.WriteString(fmt.Sprintf("\n\t\t\t{\"%s\", 1},", util.ToUnderline(field.GoName)))
+		w.idxBuilder.WriteString("\n\t\t\t},")
+		w.idxBuilder.WriteString("\n\t\t\tOptions: options.Index().SetUnique(true),")
+		w.idxBuilder.WriteString("\n\t\t},")
+	}
+
+	idxSlc := proto.GetExtension(msg.Msg.Desc.Options(), tool.E_Idx).([]*tool.Idx)
+	for _, idx := range idxSlc {
 		if len(idx.Fields) == 0 {
 			continue
 		}
-		if !w.importBson {
-			w.importBson = true
-			w.importBuilder.WriteString("\n\"go.mongodb.org/mongo-driver/bson\"")
-		}
+		w.writeImportBson()
 		w.idxBuilder.WriteString("\n\t\t{")
 		w.idxBuilder.WriteString("\n\t\t\tKeys: bson.D{")
 		for _, f := range idx.Fields {
@@ -217,22 +231,25 @@ func (w *mgoWriter) writeIdx(msg *Msg) {
 		optBuilder.WriteString("\n\t\t\tOptions: options.Index()")
 		if idx.Name != "" {
 			writeOpt = true
+			w.writeImportOptions()
 			optBuilder.WriteString(fmt.Sprintf(".\n\t\t\t\tSetName(\"%s\")", idx.Name))
 		}
 		if idx.Unique {
 			writeOpt = true
+			w.writeImportOptions()
 			optBuilder.WriteString(".\n\t\t\t\tSetUnique(true)")
 		}
 		if idx.Ttl > 0 {
 			writeOpt = true
+			w.writeImportOptions()
 			optBuilder.WriteString(fmt.Sprintf(".\n\t\t\t\tSetExpireAfterSeconds(%d)", idx.Ttl))
 		}
 		if idx.Sparse {
 			writeOpt = true
+			w.writeImportOptions()
 			optBuilder.WriteString(".\n\t\t\t\tSetSparse(true)")
 		}
 		if writeOpt {
-			w.importBuilder.WriteString("\n\"go.mongodb.org/mongo-driver/mongo/options\"")
 			w.idxBuilder.WriteString(optBuilder.String())
 			w.idxBuilder.WriteString(",")
 		}
@@ -242,4 +259,29 @@ func (w *mgoWriter) writeIdx(msg *Msg) {
 
 	w.idxBuilder.WriteString("\n\t}")
 	w.idxBuilder.WriteString("\n}")
+}
+
+func (w *mgoWriter) writeImportBson() {
+	if w.importBson {
+		return
+	}
+	w.importBson = true
+	w.importBuilder.WriteString("\n\"go.mongodb.org/mongo-driver/bson\"")
+}
+
+func (w *mgoWriter) writeImportOptions() {
+	if w.importOptions {
+		return
+	}
+	w.importOptions = true
+	w.importBuilder.WriteString("\n\"go.mongodb.org/mongo-driver/mongo/options\"")
+}
+
+func (w *mgoWriter) writeImportMgo() {
+	if w.importMgo {
+		return
+	}
+	w.importMgo = true
+	w.importBuilder.WriteString("\n\"github.com/15mga/kiwi/util/mgo\"")
+	w.importBuilder.WriteString("\n\"go.mongodb.org/mongo-driver/mongo\"")
 }

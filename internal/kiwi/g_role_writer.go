@@ -53,7 +53,7 @@ func (w *gRoleWriter) WriteMsg(idx int, msg *Msg) error {
 	}
 	if len(slc) > 0 {
 		w.roleBuilder.WriteString(fmt.Sprintf("\n\t%d: {%s},",
-			kiwi.MergeSvcCode(msg.Svc.Id, msg.MethodCode), strings.Join(slc, ", ")))
+			kiwi.MergeSvcMethod(msg.Svc.Id, msg.MethodCode), strings.Join(slc, ", ")))
 	}
 	return nil
 }
@@ -67,7 +67,7 @@ func (w *gRoleWriter) WriteHeader() {
 	w.roleToStrBuilder.WriteString("\n\t\tswitch role {")
 	w.strToRoleBuilder.WriteString("\n\n\tfunc StrToRole(role string) int64 {")
 	w.strToRoleBuilder.WriteString("\n\t\tswitch role {")
-	w.roleBuilder.WriteString("\n\n\tvar MsgRole = map[kiwi.TSvcCode][]int64 {")
+	w.roleBuilder.WriteString("\n\n\tvar MsgRole = map[kiwi.TSvcMethod][]int64 {")
 }
 
 func (w *gRoleWriter) WriteFooter() {
