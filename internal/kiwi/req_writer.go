@@ -2,7 +2,6 @@ package kiwi
 
 import (
 	"fmt"
-	"sort"
 	"strings"
 )
 
@@ -52,9 +51,6 @@ func (w *reqWriter) Save() error {
 	}
 
 	svcName := w.svc.Name
-	sort.Slice(w.msgSlc, func(i, j int) bool {
-		return w.msgSlc[i].MethodCode < w.msgSlc[j].MethodCode
-	})
 	for _, msg := range w.msgSlc {
 		w.builder.WriteString("\n")
 		msgName := msg.MsgName

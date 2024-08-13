@@ -111,6 +111,9 @@ func (b *builder) build() error {
 			panic("recycle dependencies " + p)
 		}
 	}
+	sort.Slice(svcSlc, func(i, j int) bool {
+		return svcSlc[i].Id < svcSlc[j].Id
+	})
 	return b.write(svcSlc)
 }
 

@@ -48,6 +48,10 @@ func (w *reqPrcWriter) WriteMsg(idx int, msg *Msg) error {
 		name := msg.MsgName
 		svcBuilder.WriteString(fmt.Sprintf("\n\tkiwi.Router().BindReq(common.%s, codec.%s, func(req kiwi.IRcvRequest){",
 			util.ToBigHump(msg.Svc.Name), name))
+		svcBuilder.WriteString("\n\tif _svc.IsShutdown() {")
+		svcBuilder.WriteString("\n\t\treturn")
+		svcBuilder.WriteString("\n\t}")
+		svcBuilder.WriteString("\n\t_svc.Wait()")
 		svcBuilder.WriteString("\n\treq.SetReceiver(_svc)")
 		worker := msg.GetWorker()
 		switch worker.Mode {

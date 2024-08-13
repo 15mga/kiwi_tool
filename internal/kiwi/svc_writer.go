@@ -64,17 +64,19 @@ func (w *svcWriter) Save() error {
 		}
 		w.svcBuilder.WriteString("\n\t\t\t),")
 	} else {
-		w.svcBuilder.WriteString(fmt.Sprintf("\n\t\t\tService: core.NewService(common.%s, ver%s),", util.ToBigHump(svcName)))
+		w.svcBuilder.WriteString(fmt.Sprintf("\n\t\t\tService: core.NewService(common.%s, ver),", util.ToBigHump(svcName)))
 	}
 	w.svcBuilder.WriteString("\n\t\t}}")
 	w.svcBuilder.WriteString("\n\treturn _svc")
 	w.svcBuilder.WriteString("\n}")
 
-	w.svcBuilder.WriteString("\n\ntype Svc struct {")
+	w.svcBuilder.WriteString(fmt.Sprintf("\n\n//id: %d name: %s", w.svc.Id, w.svc.Name))
+	w.svcBuilder.WriteString("\ntype Svc struct {")
 	w.svcBuilder.WriteString("\n\tsvc")
 	w.svcBuilder.WriteString("\n}")
 
-	w.svcBuilder.WriteString("\n\ntype svc struct {")
+	w.svcBuilder.WriteString(fmt.Sprintf("\n\n//id: %d name: %s", w.svc.Id, w.svc.Name))
+	w.svcBuilder.WriteString("\ntype svc struct {")
 	w.svcBuilder.WriteString("\n\tcore.Service")
 	w.svcBuilder.WriteString("\n}")
 

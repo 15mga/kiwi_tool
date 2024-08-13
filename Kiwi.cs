@@ -33,24 +33,25 @@ namespace Kiwi {
             "YxgEIAMoCzIJLmtpd2kuTnRjEhgKBGZhaWwYBSADKAsyCi5raXdpLkZhaWwS",
             "DgoGY29tbW9uGAYgAygJEhQKDGRlcGVuZGVuY2llcxgHIAMoCSJRCgZXb3Jr",
             "ZXISGwoEbW9kZRgBIAEoDjINLmtpd2kuRVdvcmtlchIdCgZvcmlnaW4YAiAB",
-            "KA4yDS5raXdpLkVPcmlnaW4SCwoDa2V5GAMgASgJIi4KBEZhaWwSDAoEY29k",
-            "ZRgBIAEoBRILCgNrZXkYAiABKAkSCwoDbXNnGAMgASgJIjIKCElkeEZpZWxk",
-            "EgwKBG5hbWUYASABKAkSGAoEdHlwZRgCIAEoDjIKLmtpd2kuRUlkeCJgCgNJ",
-            "ZHgSHgoGZmllbGRzGAEgAygLMg4ua2l3aS5JZHhGaWVsZBIOCgZ1bmlxdWUY",
-            "AiABKAgSDAoEbmFtZRgDIAEoCRILCgN0dGwYBCABKAMSDgoGc3BhcnNlGAUg",
-            "ASgIKikKB0VPcmlnaW4SBwoDUGt0EAASCAoESGVhZBABEgsKB1NlcnZpY2UQ",
-            "Aio+CgdFV29ya2VyEgYKAkdvEAASCgoGQWN0aXZlEAESCQoFU2hhcmUQAhIK",
-            "CgZHbG9iYWwQAxIICgRTZWxmEAQqMwoERUlkeBIHCgNBc2MQABIICgREZXNj",
-            "EAESDgoKVHdvRFNwaGVyZRACEggKBFRleHQQAzo2CgNzdmMSHC5nb29nbGUu",
-            "cHJvdG9idWYuRmlsZU9wdGlvbnMY2ZsJIAEoCzIJLmtpd2kuU3ZjOjEKBm1l",
-            "dGhvZBIfLmdvb2dsZS5wcm90b2J1Zi5NZXNzYWdlT3B0aW9ucxi8nAkgASgF",
-            "Oi8KBHJvbGUSHy5nb29nbGUucHJvdG9idWYuTWVzc2FnZU9wdGlvbnMYvZwJ",
-            "IAMoCToxCgZzY2hlbWESHy5nb29nbGUucHJvdG9idWYuTWVzc2FnZU9wdGlv",
-            "bnMYvpwJIAEoCDo5CgNpZHgSHy5nb29nbGUucHJvdG9idWYuTWVzc2FnZU9w",
-            "dGlvbnMYv5wJIAMoCzIJLmtpd2kuSWR4Oj8KBndvcmtlchIfLmdvb2dsZS5w",
-            "cm90b2J1Zi5NZXNzYWdlT3B0aW9ucxjAnAkgASgLMgwua2l3aS5Xb3JrZXI6",
-            "LgoFY2FjaGUSHS5nb29nbGUucHJvdG9idWYuRmllbGRPcHRpb25zGKCdCSAB",
-            "KAhCHFoaZ2l0aHViLmNvbS8xNW1nYS9raXdpX3Rvb2xiBnByb3RvMw=="));
+            "KA4yDS5raXdpLkVPcmlnaW4SCwoDa2V5GAMgASgJIjQKBEZhaWwSDAoEY29k",
+            "ZRgBIAEoBRINCgVlcnJvchgCIAEoCRIPCgdjb21tZW50GAMgASgJIjIKCElk",
+            "eEZpZWxkEgwKBG5hbWUYASABKAkSGAoEdHlwZRgCIAEoDjIKLmtpd2kuRUlk",
+            "eCJgCgNJZHgSHgoGZmllbGRzGAEgAygLMg4ua2l3aS5JZHhGaWVsZBIOCgZ1",
+            "bmlxdWUYAiABKAgSDAoEbmFtZRgDIAEoCRILCgN0dGwYBCABKAMSDgoGc3Bh",
+            "cnNlGAUgASgIKikKB0VPcmlnaW4SBwoDUGt0EAASCAoESGVhZBABEgsKB1Nl",
+            "cnZpY2UQAio+CgdFV29ya2VyEgYKAkdvEAASCgoGQWN0aXZlEAESCQoFU2hh",
+            "cmUQAhIKCgZHbG9iYWwQAxIICgRTZWxmEAQqMwoERUlkeBIHCgNBc2MQABII",
+            "CgREZXNjEAESDgoKVHdvRFNwaGVyZRACEggKBFRleHQQAzo2CgNzdmMSHC5n",
+            "b29nbGUucHJvdG9idWYuRmlsZU9wdGlvbnMY2ZsJIAEoCzIJLmtpd2kuU3Zj",
+            "OjEKBm1ldGhvZBIfLmdvb2dsZS5wcm90b2J1Zi5NZXNzYWdlT3B0aW9ucxi8",
+            "nAkgASgFOi8KBHJvbGUSHy5nb29nbGUucHJvdG9idWYuTWVzc2FnZU9wdGlv",
+            "bnMYvZwJIAMoCToxCgZzY2hlbWESHy5nb29nbGUucHJvdG9idWYuTWVzc2Fn",
+            "ZU9wdGlvbnMYvpwJIAEoCDo5CgNpZHgSHy5nb29nbGUucHJvdG9idWYuTWVz",
+            "c2FnZU9wdGlvbnMYv5wJIAMoCzIJLmtpd2kuSWR4Oj8KBndvcmtlchIfLmdv",
+            "b2dsZS5wcm90b2J1Zi5NZXNzYWdlT3B0aW9ucxjAnAkgASgLMgwua2l3aS5X",
+            "b3JrZXI6LgoFY2FjaGUSHS5nb29nbGUucHJvdG9idWYuRmllbGRPcHRpb25z",
+            "GKCdCSABKAhCHFoaZ2l0aHViLmNvbS8xNW1nYS9raXdpX3Rvb2xiBnByb3Rv",
+            "Mw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.Reflection.DescriptorReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Kiwi.EOrigin), typeof(global::Kiwi.EWorker), typeof(global::Kiwi.EIdx), }, new pb::Extension[] { KiwiExtensions.Svc, KiwiExtensions.Method, KiwiExtensions.Role, KiwiExtensions.Schema, KiwiExtensions.Idx, KiwiExtensions.Worker, KiwiExtensions.Cache }, new pbr::GeneratedClrTypeInfo[] {
@@ -58,7 +59,7 @@ namespace Kiwi {
             new pbr::GeneratedClrTypeInfo(typeof(global::Kiwi.NtcItem), global::Kiwi.NtcItem.Parser, new[]{ "Code", "Mode", "Origin", "Key" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Kiwi.Svc), global::Kiwi.Svc.Parser, new[]{ "Id", "Name", "Worker", "Ntc", "Fail", "Common", "Dependencies" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Kiwi.Worker), global::Kiwi.Worker.Parser, new[]{ "Mode", "Origin", "Key" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Kiwi.Fail), global::Kiwi.Fail.Parser, new[]{ "Code", "Key", "Msg" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Kiwi.Fail), global::Kiwi.Fail.Parser, new[]{ "Code", "Error", "Comment" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Kiwi.IdxField), global::Kiwi.IdxField.Parser, new[]{ "Name", "Type" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Kiwi.Idx), global::Kiwi.Idx.Parser, new[]{ "Fields", "Unique", "Name", "Ttl", "Sparse" }, null, null, null, null)
           }));
@@ -94,11 +95,11 @@ namespace Kiwi {
   public enum EWorker {
     [pbr::OriginalName("Go")] Go = 0,
     /// <summary>
-    ///需要key
+    ///Pkt/Head使用key,Service
     /// </summary>
     [pbr::OriginalName("Active")] Active = 1,
     /// <summary>
-    ///需要key
+    ///Pkt/Head使用key,Service
     /// </summary>
     [pbr::OriginalName("Share")] Share = 2,
     [pbr::OriginalName("Global")] Global = 3,
@@ -1325,8 +1326,8 @@ namespace Kiwi {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public Fail(Fail other) : this() {
       code_ = other.code_;
-      key_ = other.key_;
-      msg_ = other.msg_;
+      error_ = other.error_;
+      comment_ = other.comment_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1348,27 +1349,27 @@ namespace Kiwi {
       }
     }
 
-    /// <summary>Field number for the "key" field.</summary>
-    public const int KeyFieldNumber = 2;
-    private string key_ = "";
+    /// <summary>Field number for the "error" field.</summary>
+    public const int ErrorFieldNumber = 2;
+    private string error_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Key {
-      get { return key_; }
+    public string Error {
+      get { return error_; }
       set {
-        key_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        error_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
-    /// <summary>Field number for the "msg" field.</summary>
-    public const int MsgFieldNumber = 3;
-    private string msg_ = "";
+    /// <summary>Field number for the "comment" field.</summary>
+    public const int CommentFieldNumber = 3;
+    private string comment_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Msg {
-      get { return msg_; }
+    public string Comment {
+      get { return comment_; }
       set {
-        msg_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        comment_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1388,8 +1389,8 @@ namespace Kiwi {
         return true;
       }
       if (Code != other.Code) return false;
-      if (Key != other.Key) return false;
-      if (Msg != other.Msg) return false;
+      if (Error != other.Error) return false;
+      if (Comment != other.Comment) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1398,8 +1399,8 @@ namespace Kiwi {
     public override int GetHashCode() {
       int hash = 1;
       if (Code != 0) hash ^= Code.GetHashCode();
-      if (Key.Length != 0) hash ^= Key.GetHashCode();
-      if (Msg.Length != 0) hash ^= Msg.GetHashCode();
+      if (Error.Length != 0) hash ^= Error.GetHashCode();
+      if (Comment.Length != 0) hash ^= Comment.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1422,13 +1423,13 @@ namespace Kiwi {
         output.WriteRawTag(8);
         output.WriteInt32(Code);
       }
-      if (Key.Length != 0) {
+      if (Error.Length != 0) {
         output.WriteRawTag(18);
-        output.WriteString(Key);
+        output.WriteString(Error);
       }
-      if (Msg.Length != 0) {
+      if (Comment.Length != 0) {
         output.WriteRawTag(26);
-        output.WriteString(Msg);
+        output.WriteString(Comment);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1444,13 +1445,13 @@ namespace Kiwi {
         output.WriteRawTag(8);
         output.WriteInt32(Code);
       }
-      if (Key.Length != 0) {
+      if (Error.Length != 0) {
         output.WriteRawTag(18);
-        output.WriteString(Key);
+        output.WriteString(Error);
       }
-      if (Msg.Length != 0) {
+      if (Comment.Length != 0) {
         output.WriteRawTag(26);
-        output.WriteString(Msg);
+        output.WriteString(Comment);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -1465,11 +1466,11 @@ namespace Kiwi {
       if (Code != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Code);
       }
-      if (Key.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Key);
+      if (Error.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Error);
       }
-      if (Msg.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Msg);
+      if (Comment.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Comment);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1486,11 +1487,11 @@ namespace Kiwi {
       if (other.Code != 0) {
         Code = other.Code;
       }
-      if (other.Key.Length != 0) {
-        Key = other.Key;
+      if (other.Error.Length != 0) {
+        Error = other.Error;
       }
-      if (other.Msg.Length != 0) {
-        Msg = other.Msg;
+      if (other.Comment.Length != 0) {
+        Comment = other.Comment;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1512,11 +1513,11 @@ namespace Kiwi {
             break;
           }
           case 18: {
-            Key = input.ReadString();
+            Error = input.ReadString();
             break;
           }
           case 26: {
-            Msg = input.ReadString();
+            Comment = input.ReadString();
             break;
           }
         }
@@ -1539,11 +1540,11 @@ namespace Kiwi {
             break;
           }
           case 18: {
-            Key = input.ReadString();
+            Error = input.ReadString();
             break;
           }
           case 26: {
-            Msg = input.ReadString();
+            Comment = input.ReadString();
             break;
           }
         }
