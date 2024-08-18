@@ -24,6 +24,9 @@ func (w *gFailCodeWriter) Reset() {
 func (w *gFailCodeWriter) Save() error {
 	constBuilder := strings.Builder{}
 	constBuilder.WriteString("package common")
+	constBuilder.WriteString("\n\nimport (")
+	constBuilder.WriteString("\n\t\"github.com/15mga/kiwi/util\"")
+	constBuilder.WriteString("\n)")
 
 	codeToStrBuilder := strings.Builder{}
 	codeToStrBuilder.WriteString("\n\nfunc init() {")

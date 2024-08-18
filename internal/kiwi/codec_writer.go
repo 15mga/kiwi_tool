@@ -37,7 +37,7 @@ func (w *codecWriter) WriteMsg(idx int, msg *Msg) error {
 		return nil
 	}
 	w.constBuilder.WriteString(fmt.Sprintf("\n%s", msg.Msg.Comments.Leading.String()))
-	w.constBuilder.WriteString(fmt.Sprintf("\t%s kiwi.TCode = %d", msg.MsgName, msg.MethodCode))
+	w.constBuilder.WriteString(fmt.Sprintf("\t%s kiwi.TMethod = %d", msg.MsgName, msg.MethodCode))
 	return nil
 }
 
