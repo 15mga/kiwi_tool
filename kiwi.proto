@@ -64,6 +64,7 @@ extend google.protobuf.MessageOptions {
 
 extend google.protobuf.FieldOptions {
   bool cache = 151200;
+  repeated string tag = 151201;
 }
 
 message Fail {

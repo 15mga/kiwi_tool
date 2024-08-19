@@ -37,6 +37,7 @@ func (w *modelWriter) WriteHeader() {
 	w.headBuilder.WriteString("\n\nimport (")
 	w.headBuilder.WriteString("\n\t\"github.com/15mga/kiwi/util/mgo\"")
 	w.headBuilder.WriteString(fmt.Sprintf("\n\t\"%s/proto/pb\"", w.Module()))
+	w.headBuilder.WriteString("\n\t\"sync\"")
 
 	w.initBuilder.WriteString("\n\nfunc initModels() {")
 	w.initBuilder.WriteString("\n\tinitModelFac()")
@@ -167,44 +168,28 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 
 	mapBuilder := strings.Builder{}
 	mapBuilder.WriteString("\n\nvar (")
-	mapBuilder.WriteString(fmt.Sprintf("\n\t_%sIdMap = make(map[string]struct{})", msg.MsgName))
-
-	storeAllBuilder := &strings.Builder{}
-	storeAllBuilder.WriteString(fmt.Sprintf("\n\nfunc StoreAll%ss() {", msg.MsgName))
-	storeAllBuilder.WriteString(fmt.Sprintf("\n\tfor id := range _%sIdMap {", msg.MsgName))
-	storeAllBuilder.WriteString(fmt.Sprintf("\n\t\tm, ok := mgo.Get[*%s](Schema%s, id)", msg.MsgName, msg.MsgName))
-	storeAllBuilder.WriteString("\n\t\tif !ok {")
-	storeAllBuilder.WriteString("\n\t\t\tcontinue")
-	storeAllBuilder.WriteString("\n\t\t}")
-	storeAllBuilder.WriteString("\n\t\tm.Store()")
-	storeAllBuilder.WriteString("\n\t}")
-	storeAllBuilder.WriteString("\n}")
 
 	setBuilder := strings.Builder{}
 	setBuilder.WriteString(fmt.Sprintf("\n\nfunc Set%s(m *%s) {", msg.MsgName, msg.MsgName))
-	setBuilder.WriteString("\n\tmgo.Set(m)")
+	setBuilder.WriteString("\n\tmgo.SetModel(m)")
 
 	delBuilder := strings.Builder{}
 	delBuilder.WriteString(fmt.Sprintf("\n\nfunc Del%s(id string) {", msg.MsgName))
-	delBuilder.WriteString(fmt.Sprintf("\n\tm, ok := mgo.Get[*%s](Schema%s, id)", msg.MsgName, msg.MsgName))
+	delBuilder.WriteString(fmt.Sprintf("\n\tm, ok := mgo.GetModel[*%s](Schema%s, id)", msg.MsgName, msg.MsgName))
 	delBuilder.WriteString("\n\tif !ok {")
 	delBuilder.WriteString("\n\t\treturn")
 	delBuilder.WriteString("\n\t}")
-	delBuilder.WriteString("\n\t_ = m.Store()")
-	delBuilder.WriteString(fmt.Sprintf("\n\tmgo.Del(Schema%s, id)", msg.MsgName))
+	delBuilder.WriteString(fmt.Sprintf("\n\tmgo.DelModel(Schema%s, id)", msg.MsgName))
 	delBuilder.WriteString(fmt.Sprintf("\n\tdel%sMap(m)", msg.MsgName))
 	delBuilder.WriteString("\n}")
 
 	evictBuilder := strings.Builder{}
 	evictBuilder.WriteString(fmt.Sprintf("\n\nfunc on%sEvict(model mgo.IModel) {", msg.MsgName))
-	evictBuilder.WriteString(fmt.Sprintf("\n\tm := model.(*%s)", msg.MsgName))
-	evictBuilder.WriteString("\n\t_ = m.Store()")
-	evictBuilder.WriteString(fmt.Sprintf("\n\tdel%sMap(m)", msg.MsgName))
+	evictBuilder.WriteString(fmt.Sprintf("\n\tdel%sMap(model.(*%s))", msg.MsgName, msg.MsgName))
 	evictBuilder.WriteString("\n}")
 
 	delMapBuilder := strings.Builder{}
 	delMapBuilder.WriteString(fmt.Sprintf("\n\nfunc del%sMap(m *%s) {", msg.MsgName, msg.MsgName))
-	delMapBuilder.WriteString(fmt.Sprintf("\n\tdelete(_%sIdMap, m.GetId())", msg.MsgName))
 
 	w.evictBuilder.WriteString(fmt.Sprintf("\n\tmgo.BindEvict(Schema%s, on%sEvict)", msg.MsgName, msg.MsgName))
 
@@ -213,7 +198,6 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 	newFnBuilder.WriteString(fmt.Sprintf("\n\tm := &%s{", msg.MsgName))
 	newFnBuilder.WriteString(fmt.Sprintf("\n\t%s:&pb.%s{},", msg.MsgName, msg.MsgName))
 	newFnBuilder.WriteString("\n\t}")
-	newFnBuilder.WriteString(fmt.Sprintf("\n\tm.Model = mgo.NewModel(Schema%s, %d, m.GetVal)", msg.MsgName, len(msg.Msg.Fields)))
 	newFnBuilder.WriteString("\n\treturn m")
 	newFnBuilder.WriteString("\n}")
 
@@ -234,16 +218,17 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 	newFnBuilder.WriteString(fmt.Sprintf("\n\tm := &%s{", msg.MsgName))
 	newFnBuilder.WriteString(fmt.Sprintf("\n\t%s: data,", msg.MsgName))
 	newFnBuilder.WriteString("\n\t}")
-	newFnBuilder.WriteString(fmt.Sprintf("\n\tm.Model = mgo.NewModel(Schema%s, %d, m.GetVal)", msg.MsgName, len(msg.Msg.Fields)))
-	newFnBuilder.WriteString("\n\tm.SetDirty(")
 
 	structBuilder := strings.Builder{}
 	structBuilder.WriteString(fmt.Sprintf("\n\ntype %s struct {", msg.MsgName))
 	structBuilder.WriteString(fmt.Sprintf("\n\t*pb.%s", msg.MsgName))
-	structBuilder.WriteString("\n\t*mgo.Model")
 	structBuilder.WriteString("\n}")
 
 	structGetterBuilder := &strings.Builder{}
+	structGetterBuilder.WriteString(fmt.Sprintf("\n\nfunc (this *%s) Schema() string {", msg.MsgName))
+	structGetterBuilder.WriteString(fmt.Sprintf("\n\treturn Schema%s", msg.MsgName))
+	structGetterBuilder.WriteString("\n}")
+
 	structGetterBuilder.WriteString(fmt.Sprintf("\n\nfunc (this *%s) GetVal(key string) any {", msg.MsgName))
 	structGetterBuilder.WriteString("\n\tswitch key {")
 
@@ -254,16 +239,30 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 	getBuilder := strings.Builder{}
 	importBson := false
 	importUnsafe := false
-	bigSvcName := util.ToBigHump(w.svc.Name)
+	tagMap := make(map[string][]string, len(msg.Msg.Fields))
 	for _, field := range msg.Msg.Fields {
+		tags := proto.GetExtension(field.Desc.Options(), tool.E_Tag).([]string)
+		if len(tags) > 0 {
+			for _, tag := range tags {
+				s, ok := tagMap[tag]
+				if ok {
+					tagMap[tag] = append(s, field.GoName)
+				} else {
+					tagMap[tag] = []string{field.GoName}
+				}
+			}
+		}
+		structGetterBuilder.WriteString(fmt.Sprintf("\n\tcase %s:", w.getFieldName(msg, field.GoName)))
+		structGetterBuilder.WriteString(fmt.Sprintf("\n\t\treturn this.%s", field.GoName))
+
 		if field.GoName == "Id" {
 			getBuilder.WriteString(fmt.Sprintf("\n\n\tfunc Get%sWith%s(%s string) (*%s, error)  {", msg.MsgName, field.GoName, field.Desc.Name(), msg.MsgName))
-			getBuilder.WriteString(fmt.Sprintf("\n\tm, ok := mgo.Get[*%s](Schema%s, %s)", msg.MsgName, msg.MsgName, field.Desc.Name()))
+			getBuilder.WriteString(fmt.Sprintf("\n\tm, ok := mgo.GetModel[*%s](Schema%s, %s)", msg.MsgName, msg.MsgName, field.Desc.Name()))
 			getBuilder.WriteString("\n\tif ok {")
 			getBuilder.WriteString("\n\t\treturn m, nil")
 			getBuilder.WriteString("\n\t}")
 			getBuilder.WriteString(fmt.Sprintf("\n\tm = _ModelFac[Schema%s]().(*%s)", msg.MsgName, msg.MsgName))
-			getBuilder.WriteString(fmt.Sprintf("\n\terr := m.Load(id, m.%s)", msg.MsgName))
+			getBuilder.WriteString(fmt.Sprintf("\n\terr := mgo.FindOne(Schema%s, bson.M{\"_id\": id}, m.%s)", msg.MsgName, msg.MsgName))
 			getBuilder.WriteString("\n\tif err != nil {")
 			getBuilder.WriteString("\n\t\treturn nil, err")
 			getBuilder.WriteString("\n\t}")
@@ -272,43 +271,37 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 			getBuilder.WriteString("\n}")
 			continue
 		}
-		if msg.MsgName == bigSvcName {
-			newFnBuilder.WriteString(fmt.Sprintf("\n\t\t%s,", field.GoName))
-		} else {
-			newFnBuilder.WriteString(fmt.Sprintf("\n\t\t%s%s,", msg.MsgName, field.GoName))
-		}
+
 		cache := proto.GetExtension(field.Desc.Options(), tool.E_Cache).(bool)
 		if cache {
 			if field.GoName != "Id" {
 				switch field.Desc.Kind() {
 				case protoreflect.StringKind:
-					mapBuilder.WriteString(fmt.Sprintf("\n\t_%s%sToId = make(map[string]string)", msg.MsgName, field.GoName))
+					mapBuilder.WriteString(fmt.Sprintf("\n\t_%s%sToId = sync.Map{}", msg.MsgName, field.GoName))
 				case protoreflect.Int64Kind,
 					protoreflect.Sint64Kind,
 					protoreflect.Fixed64Kind:
 					mapBuilder.WriteString(fmt.Sprintf("\n\t_%s%sToId = make(map[string]int64)", msg.MsgName, field.GoName))
 				}
 
-				setBuilder.WriteString(fmt.Sprintf("\n\t_%s%sToId[m.%s] = m.Id", msg.MsgName, field.GoName, field.GoName))
+				setBuilder.WriteString(fmt.Sprintf("\n\t_%s%sToId.Store(m.%s, m.Id)", msg.MsgName, field.GoName, field.GoName))
 
-				delMapBuilder.WriteString(fmt.Sprintf("\n\tdelete(_%s%sToId, m.%s)", msg.MsgName, field.GoName, field.GoName))
+				delMapBuilder.WriteString(fmt.Sprintf("\n\t_%s%sToId.Delete(m.%s)", msg.MsgName, field.GoName, field.GoName))
 			}
 
 			getBuilder.WriteString(fmt.Sprintf("\n\n\tfunc Get%sWith%s(%s string) (*%s, error) {", msg.MsgName, field.GoName, field.Desc.Name(), msg.MsgName))
-			getBuilder.WriteString(fmt.Sprintf("\n\tid, ok := _%s%sToId[%s]", msg.MsgName, field.GoName, field.Desc.Name()))
+			getBuilder.WriteString(fmt.Sprintf("\n\to, ok := _%s%sToId.Load(%s)", msg.MsgName, field.GoName, field.Desc.Name()))
 			getBuilder.WriteString("\n\tif ok {")
-			getBuilder.WriteString(fmt.Sprintf("\n\t\tm, ok := mgo.Get[*%s](Schema%s, id)", msg.MsgName, msg.MsgName))
+			getBuilder.WriteString("\n\t\tid := o.(string)")
+			getBuilder.WriteString(fmt.Sprintf("\n\t\tm, ok := mgo.GetModel[*%s](Schema%s, id)", msg.MsgName, msg.MsgName))
 			getBuilder.WriteString("\n\t\tif ok {")
 			getBuilder.WriteString("\n\t\t\treturn m, nil")
 			getBuilder.WriteString("\n\t\t}")
 			getBuilder.WriteString("\n\t}")
 			getBuilder.WriteString(fmt.Sprintf("\n\tm := _ModelFac[Schema%s]().(*%s)", msg.MsgName, msg.MsgName))
 			importBson = true
-			if msg.MsgName == bigSvcName {
-				getBuilder.WriteString(fmt.Sprintf("\n\terr := m.LoadWithFilter(bson.M{%s:%s})", field.GoName, field.Desc.Name()))
-			} else {
-				getBuilder.WriteString(fmt.Sprintf("\n\terr := m.LoadWithFilter(bson.M{%s%s:%s})", msg.MsgName, field.GoName, field.Desc.Name()))
-			}
+			getBuilder.WriteString(fmt.Sprintf("\n\terr := mgo.FindOne(Schema%s, bson.M{%s:%s}, m.%s)",
+				msg.MsgName, w.getFieldName(msg, field.GoName), field.Desc.Name(), field.GoName))
 			getBuilder.WriteString("\n\tif err != nil {")
 			getBuilder.WriteString("\n\t\treturn nil, err")
 			getBuilder.WriteString("\n\t}")
@@ -325,12 +318,14 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 			case protoreflect.BytesKind:
 				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val [][]byte) {", msg.MsgName, field.GoName))
 				structBuilder.WriteString(fmt.Sprintf("\n\tthis.%s = val", field.GoName))
-				structBuilder.WriteString(fmt.Sprintf("\n\tthis.SetDirty(%s)", w.getFieldName(msg, field.GoName)))
+				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: val})",
+					msg.MsgName, w.getFieldName(msg, field.GoName)))
 				structBuilder.WriteString("\n}")
 			case protoreflect.EnumKind:
 				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val []pb.%s) {", msg.MsgName, field.GoName, field.Enum.GoIdent.GoName))
 				structBuilder.WriteString(fmt.Sprintf("\n\tthis.%s = val", field.GoName))
-				structBuilder.WriteString(fmt.Sprintf("\n\tthis.SetDirty(%s)", w.getFieldName(msg, field.GoName)))
+				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: val})",
+					msg.MsgName, w.getFieldName(msg, field.GoName)))
 				structBuilder.WriteString("\n}")
 			default:
 				ts := field.Desc.Kind().String()
@@ -339,13 +334,15 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 				}
 				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val []%s) {", msg.MsgName, field.GoName, ts))
 				structBuilder.WriteString(fmt.Sprintf("\n\tthis.%s = val", field.GoName))
-				structBuilder.WriteString(fmt.Sprintf("\n\tthis.SetDirty(%s)", w.getFieldName(msg, field.GoName)))
+				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: val})",
+					msg.MsgName, w.getFieldName(msg, field.GoName)))
 				structBuilder.WriteString("\n}")
 
 				//push
 				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Push%s(items ...%s) {", msg.MsgName, field.GoName, ts))
 				structBuilder.WriteString(fmt.Sprintf("\n\tthis.%s = append(this.%s, items...)", field.GoName, field.GoName))
-				structBuilder.WriteString(fmt.Sprintf("\n\tthis.SetDirty(%s)", w.getFieldName(msg, field.GoName)))
+				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: val})",
+					msg.MsgName, w.getFieldName(msg, field.GoName)))
 				structBuilder.WriteString("\n}")
 				//addToSet
 				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) AddToSet%s(items ...%s) {", msg.MsgName, field.GoName, ts))
@@ -357,7 +354,8 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 				structBuilder.WriteString("\n\t\t}")
 				structBuilder.WriteString(fmt.Sprintf("\n\t\tthis.%s = append(this.%s, item)", field.GoName, field.GoName))
 				structBuilder.WriteString("\n\t}")
-				structBuilder.WriteString(fmt.Sprintf("\n\tthis.SetDirty(%s)", w.getFieldName(msg, field.GoName)))
+				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: val})",
+					msg.MsgName, w.getFieldName(msg, field.GoName)))
 				structBuilder.WriteString("\n}")
 				//pull
 				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Pull%s(items ...%s) {", msg.MsgName, field.GoName, ts))
@@ -375,7 +373,8 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 				structBuilder.WriteString("\n\t\t}")
 				structBuilder.WriteString("\n\t}")
 				structBuilder.WriteString("\n\tif dirty {")
-				structBuilder.WriteString(fmt.Sprintf("\n\t\tthis.SetDirty(%s)", w.getFieldName(msg, field.GoName)))
+				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: val})",
+					msg.MsgName, w.getFieldName(msg, field.GoName)))
 				structBuilder.WriteString("\n\t}")
 				structBuilder.WriteString("\n}")
 			}
@@ -394,7 +393,8 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val %s) {", msg.MsgName, field.GoName, field.Desc.Kind()))
 			}
 			structBuilder.WriteString(fmt.Sprintf("\n\tthis.%s = val", field.GoName))
-			structBuilder.WriteString(fmt.Sprintf("\n\tthis.SetDirty(%s)", w.getFieldName(msg, field.GoName)))
+			structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: val})",
+				msg.MsgName, w.getFieldName(msg, field.GoName)))
 			structBuilder.WriteString("\n}")
 		}
 	}
@@ -408,7 +408,6 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 
 	mapBuilder.WriteString("\n)")
 	delMapBuilder.WriteString("\n}")
-	newFnBuilder.WriteString("\n\t)")
 	newFnBuilder.WriteString("\n\treturn m")
 	newFnBuilder.WriteString("\n}")
 	setBuilder.WriteString("\n}")
@@ -419,8 +418,17 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 	structGetterBuilder.WriteString("\n\t}")
 	structGetterBuilder.WriteString("\n}")
 
+	tagBuilder := strings.Builder{}
+	for tag, slc := range tagMap {
+		tagBuilder.WriteString(fmt.Sprintf("\n\nfunc (this *%s) Copy%sTag(m *pb.%s) {",
+			msg.MsgName, util.ToBigHump(tag), msg.MsgName))
+		for _, field := range slc {
+			tagBuilder.WriteString(fmt.Sprintf("\n\tm.%s = this.%s", field, field))
+		}
+		tagBuilder.WriteString("\n}")
+	}
+
 	w.msgBuilder.WriteString(mapBuilder.String() +
-		storeAllBuilder.String() +
 		setBuilder.String() +
 		delBuilder.String() +
 		evictBuilder.String() +
@@ -429,6 +437,7 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 		structBuilder.String() +
 		newFnBuilder.String() +
 		structGetterBuilder.String() +
+		tagBuilder.String() +
 		structCostBuilder.String())
 
 	return nil
