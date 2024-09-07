@@ -2,7 +2,6 @@ package kiwi
 
 import (
 	"fmt"
-	"github.com/15mga/kiwi"
 	"github.com/15mga/kiwi/util"
 	tool "github.com/15mga/kiwi_tool"
 	"google.golang.org/protobuf/proto"
@@ -20,7 +19,6 @@ type gRoleWriter struct {
 	footBuilder      *strings.Builder
 	roleToStrBuilder *strings.Builder
 	strToRoleBuilder *strings.Builder
-	roleBuilder      *strings.Builder
 }
 
 func (w *gRoleWriter) Reset() {
@@ -29,7 +27,6 @@ func (w *gRoleWriter) Reset() {
 	w.footBuilder = &strings.Builder{}
 	w.roleToStrBuilder = &strings.Builder{}
 	w.strToRoleBuilder = &strings.Builder{}
-	w.roleBuilder = &strings.Builder{}
 }
 
 func (w *gRoleWriter) WriteMsg(idx int, msg *Msg) error {
@@ -37,9 +34,12 @@ func (w *gRoleWriter) WriteMsg(idx int, msg *Msg) error {
 		return nil
 	}
 	roleSlc := proto.GetExtension(msg.Msg.Desc.Options(), tool.E_Role).([]string)
+	if len(roleSlc) == 0 {
+		return nil
+	}
+	w.SetDirty(true)
 	slc := make([]string, 0, len(roleSlc))
 	for _, role := range roleSlc {
-		w.SetDirty(true)
 		_, ok := w.roleNames[role]
 		bigRole := "R" + util.ToBigHump(role)
 		if !ok {
@@ -51,23 +51,15 @@ func (w *gRoleWriter) WriteMsg(idx int, msg *Msg) error {
 		}
 		slc = append(slc, bigRole)
 	}
-	if len(slc) > 0 {
-		w.roleBuilder.WriteString(fmt.Sprintf("\n\t%d: {%s},",
-			kiwi.MergeSvcMethod(msg.Svc.Id, msg.MethodCode), strings.Join(slc, ", ")))
-	}
 	return nil
 }
 
 func (w *gRoleWriter) WriteHeader() {
 	w.headBuilder.WriteString("package common")
-	w.headBuilder.WriteString("\n\nimport (")
-	w.headBuilder.WriteString("\n\t\"github.com/15mga/kiwi\"")
-	w.headBuilder.WriteString("\n)")
 	w.roleToStrBuilder.WriteString("\n\n\tfunc RoleToStr(role int64) string {")
 	w.roleToStrBuilder.WriteString("\n\t\tswitch role {")
 	w.strToRoleBuilder.WriteString("\n\n\tfunc StrToRole(role string) int64 {")
 	w.strToRoleBuilder.WriteString("\n\t\tswitch role {")
-	w.roleBuilder.WriteString("\n\n\tvar MsgRole = map[kiwi.TSvcMethod][]int64 {")
 }
 
 func (w *gRoleWriter) WriteFooter() {
@@ -79,7 +71,6 @@ func (w *gRoleWriter) WriteFooter() {
 	w.strToRoleBuilder.WriteString("\n\t\treturn 0")
 	w.strToRoleBuilder.WriteString("\n\t}")
 	w.strToRoleBuilder.WriteString("\n}")
-	w.roleBuilder.WriteString("\n}")
 }
 
 func (w *gRoleWriter) Save() error {
@@ -87,6 +78,5 @@ func (w *gRoleWriter) Save() error {
 		w.headBuilder.String()+
 			w.roleToStrBuilder.String()+
 			w.strToRoleBuilder.String()+
-			w.footBuilder.String()+
-			w.roleBuilder.String())
+			w.footBuilder.String())
 }
