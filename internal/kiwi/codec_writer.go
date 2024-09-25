@@ -29,13 +29,13 @@ func (w *codecWriter) WriteHeader() {
 }
 
 func (w *codecWriter) WriteMsg(idx int, msg *Msg) error {
-	w.SetDirty(true)
 	if msg.Type != EMsgPus &&
 		msg.Type != EMsgReq &&
 		msg.Type != EMsgRes &&
 		msg.Type != EMsgNtc {
 		return nil
 	}
+	w.SetDirty(true)
 	w.constBuilder.WriteString(fmt.Sprintf("\n%s", msg.Msg.Comments.Leading.String()))
 	w.constBuilder.WriteString(fmt.Sprintf("\t%s kiwi.TMethod = %d", msg.MsgName, msg.MethodCode))
 	return nil

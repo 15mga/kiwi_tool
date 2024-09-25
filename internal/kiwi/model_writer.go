@@ -37,7 +37,6 @@ func (w *modelWriter) WriteHeader() {
 	w.headBuilder.WriteString("\n\nimport (")
 	w.headBuilder.WriteString("\n\t\"github.com/15mga/kiwi/util/mgo\"")
 	w.headBuilder.WriteString(fmt.Sprintf("\n\t\"%s/proto/pb\"", w.Module()))
-	w.headBuilder.WriteString("\n\t\"sync\"")
 
 	w.initBuilder.WriteString("\n\nfunc initModels() {")
 	w.initBuilder.WriteString("\n\tinitModelFac()")
@@ -239,6 +238,7 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 	getBuilder := strings.Builder{}
 	importBson := false
 	importUnsafe := false
+	importSync := false
 	tagMap := make(map[string][]string, len(msg.Msg.Fields))
 	for _, field := range msg.Msg.Fields {
 		tags := proto.GetExtension(field.Desc.Options(), tool.E_Tag).([]string)
@@ -277,6 +277,7 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 			if field.GoName != "Id" {
 				switch field.Desc.Kind() {
 				case protoreflect.StringKind:
+					importSync = true
 					mapBuilder.WriteString(fmt.Sprintf("\n\t_%s%sToId = sync.Map{}", msg.MsgName, field.GoName))
 				case protoreflect.Int64Kind,
 					protoreflect.Sint64Kind,
@@ -299,7 +300,6 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 			getBuilder.WriteString("\n\t\t}")
 			getBuilder.WriteString("\n\t}")
 			getBuilder.WriteString(fmt.Sprintf("\n\tm := _ModelFac[Schema%s]().(*%s)", msg.MsgName, msg.MsgName))
-			importBson = true
 			getBuilder.WriteString(fmt.Sprintf("\n\terr := mgo.FindOne(Schema%s, bson.M{%s:%s}, m.%s)",
 				msg.MsgName, w.getFieldName(msg, field.GoName), field.Desc.Name(), field.GoName))
 			getBuilder.WriteString("\n\tif err != nil {")
@@ -310,6 +310,7 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 			getBuilder.WriteString("\n}")
 		}
 
+		importBson = true
 		if field.Desc.IsList() {
 			if w.writeFieldItemsCost(structCostBuilder, field, "this") {
 				importUnsafe = true
@@ -323,6 +324,42 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 				structBuilder.WriteString("\n}")
 			case protoreflect.EnumKind:
 				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val []pb.%s) {", msg.MsgName, field.GoName, field.Enum.GoIdent.GoName))
+				structBuilder.WriteString(fmt.Sprintf("\n\tthis.%s = val", field.GoName))
+				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: val})",
+					msg.MsgName, w.getFieldName(msg, field.GoName)))
+				structBuilder.WriteString("\n}")
+			case protoreflect.Sfixed32Kind:
+				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val []int32) {", msg.MsgName, field.GoName))
+				structBuilder.WriteString(fmt.Sprintf("\n\tthis.%s = val", field.GoName))
+				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: val})",
+					msg.MsgName, w.getFieldName(msg, field.GoName)))
+				structBuilder.WriteString("\n}")
+			case protoreflect.Fixed32Kind:
+				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val []uint32) {", msg.MsgName, field.GoName))
+				structBuilder.WriteString(fmt.Sprintf("\n\tthis.%s = val", field.GoName))
+				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: val})",
+					msg.MsgName, w.getFieldName(msg, field.GoName)))
+				structBuilder.WriteString("\n}")
+			case protoreflect.Sfixed64Kind:
+				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val []int64) {", msg.MsgName, field.GoName))
+				structBuilder.WriteString(fmt.Sprintf("\n\tthis.%s = val", field.GoName))
+				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: val})",
+					msg.MsgName, w.getFieldName(msg, field.GoName)))
+				structBuilder.WriteString("\n}")
+			case protoreflect.Fixed64Kind:
+				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val []uint64) {", msg.MsgName, field.GoName))
+				structBuilder.WriteString(fmt.Sprintf("\n\tthis.%s = val", field.GoName))
+				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: val})",
+					msg.MsgName, w.getFieldName(msg, field.GoName)))
+				structBuilder.WriteString("\n}")
+			case protoreflect.FloatKind:
+				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val []float32) {", msg.MsgName, field.GoName))
+				structBuilder.WriteString(fmt.Sprintf("\n\tthis.%s = val", field.GoName))
+				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: val})",
+					msg.MsgName, w.getFieldName(msg, field.GoName)))
+				structBuilder.WriteString("\n}")
+			case protoreflect.DoubleKind:
+				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val []float64) {", msg.MsgName, field.GoName))
 				structBuilder.WriteString(fmt.Sprintf("\n\tthis.%s = val", field.GoName))
 				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: val})",
 					msg.MsgName, w.getFieldName(msg, field.GoName)))
@@ -341,7 +378,7 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 				//push
 				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Push%s(items ...%s) {", msg.MsgName, field.GoName, ts))
 				structBuilder.WriteString(fmt.Sprintf("\n\tthis.%s = append(this.%s, items...)", field.GoName, field.GoName))
-				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: val})",
+				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: items})",
 					msg.MsgName, w.getFieldName(msg, field.GoName)))
 				structBuilder.WriteString("\n}")
 				//addToSet
@@ -354,7 +391,7 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 				structBuilder.WriteString("\n\t\t}")
 				structBuilder.WriteString(fmt.Sprintf("\n\t\tthis.%s = append(this.%s, item)", field.GoName, field.GoName))
 				structBuilder.WriteString("\n\t}")
-				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: val})",
+				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: items})",
 					msg.MsgName, w.getFieldName(msg, field.GoName)))
 				structBuilder.WriteString("\n}")
 				//pull
@@ -373,7 +410,7 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 				structBuilder.WriteString("\n\t\t}")
 				structBuilder.WriteString("\n\t}")
 				structBuilder.WriteString("\n\tif dirty {")
-				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: val})",
+				structBuilder.WriteString(fmt.Sprintf("\n\tmgo.ModelWriter().Write(Schema%s, this.Id, bson.M{%s: items})",
 					msg.MsgName, w.getFieldName(msg, field.GoName)))
 				structBuilder.WriteString("\n\t}")
 				structBuilder.WriteString("\n}")
@@ -389,6 +426,18 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val pb.%s) {", msg.MsgName, field.GoName, field.Enum.GoIdent.GoName))
 			case protoreflect.MessageKind:
 				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val *pb.%s) {", msg.MsgName, field.GoName, field.Message.Desc.Name()))
+			case protoreflect.Fixed32Kind:
+				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val uint32) {", msg.MsgName, field.GoName))
+			case protoreflect.Sfixed32Kind:
+				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val int32) {", msg.MsgName, field.GoName))
+			case protoreflect.Fixed64Kind:
+				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val uint64) {", msg.MsgName, field.GoName))
+			case protoreflect.Sfixed64Kind:
+				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val int64) {", msg.MsgName, field.GoName))
+			case protoreflect.FloatKind:
+				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val float32) {", msg.MsgName, field.GoName))
+			case protoreflect.DoubleKind:
+				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val float64) {", msg.MsgName, field.GoName))
 			default:
 				structBuilder.WriteString(fmt.Sprintf("\n\n\tfunc (this *%s) Set%s(val %s) {", msg.MsgName, field.GoName, field.Desc.Kind()))
 			}
@@ -401,6 +450,9 @@ func (w *modelWriter) WriteMsg(idx int, msg *Msg) error {
 
 	if importUnsafe {
 		w.headBuilder.WriteString("\n\t\"unsafe\"")
+	}
+	if importSync {
+		w.headBuilder.WriteString("\n\t\"sync\"")
 	}
 	if importBson {
 		w.headBuilder.WriteString("\n\t\"go.mongodb.org/mongo-driver/bson\"")
